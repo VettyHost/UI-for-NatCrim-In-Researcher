@@ -52,6 +52,16 @@
             gap: 10px;
             margin-left: auto;
         }
+        
+        #addNewVendorBtn {
+            background-color: #6c757d;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+        }
 
         .controls button {
             padding: 10px 15px;
@@ -63,11 +73,6 @@
 
         #addBtn {
             background-color: #28a745;
-            color: white;
-        }
-
-        #updateBtn {
-            background-color: #007bff;
             color: white;
         }
 
@@ -255,8 +260,8 @@
                 <input type="text" id="sourceNameFilter" placeholder="Search Source Name...">
             </div>
             <div class="action-buttons">
-                <button id="addBtn">Add Vendor</button>
-                <button id="updateBtn">Update Vendor</button>
+                <button id="addBtn">Add New</button>
+                <button id="addNewVendorBtn">Add New Vendor</button>
             </div>
         </div>
         <table>
@@ -270,188 +275,49 @@
                 </tr>
             </thead>
             <tbody id="dataTable">
-                <tr data-example="SOR" data-vendor="RapidCourt">
-                    <td data-label="Example Of">SOR</td>
-                    <td data-label="Source Name">Dru Sjodin National Sex Offender Public Website (NSOPW)</td>
-                    <td data-label="Vendor">RapidCourt</td>
-                    <td data-label="Update" class="action-cell"><button class="update">✏️</button></td>
-                    <td data-label="Delete" class="action-cell"><button class="delete">🗑️</button></td>
-                </tr>
-                <tr data-example="SOR" data-vendor="SJV">
-                    <td data-label="Example Of">SOR</td>
-                    <td data-label="Source Name">California Megan's Law (CA DOJ)</td>
-                    <td data-label="Vendor">SJV</td>
-                    <td data-label="Update" class="action-cell"><button class="update">✏️</button></td>
-                    <td data-label="Delete" class="action-cell"><button class="delete">🗑️</button></td>
-                </tr>
-                <tr data-example="SOR" data-vendor="RapidCourt">
-                    <td data-label="Example Of">SOR</td>
-                    <td data-label="Source Name">Florida FDLE Sexual Offenders & Predators Search</td>
-                    <td data-label="Vendor">RapidCourt</td>
-                    <td data-label="Update" class="action-cell"><button class="update">✏️</button></td>
-                    <td data-label="Delete" class="action-cell"><button class="delete">🗑️</button></td>
-                </tr>
-                <tr data-example="SOR" data-vendor="SJV">
-                    <td data-label="Example Of">SOR</td>
-                    <td data-label="Source Name">Texas DPS Public Sex Offender Registry</td>
-                    <td data-label="Vendor">SJV</td>
-                    <td data-label="Update" class="action-cell"><button class="update">✏️</button></td>
-                    <td data-label="Delete" class="action-cell"><button class="delete">🗑️</button></td>
-                </tr>
-                <tr data-example="SOR" data-vendor="RapidCourt">
-                    <td data-label="Example Of">SOR</td>
-                    <td data-label="Source Name">New York DCJS Sex Offender Registry</td>
-                    <td data-label="Vendor">RapidCourt</td>
-                    <td data-label="Update" class="action-cell"><button class="update">✏️</button></td>
-                    <td data-label="Delete" class="action-cell"><button class="delete">🗑️</button></td>
-                </tr>
-                <tr data-example="SOR" data-vendor="SJV">
-                    <td data-label="Example Of">SOR</td>
-                    <td data-label="Source Name">Illinois State Police Sex Offender Registry</td>
-                    <td data-label="Vendor">SJV</td>
-                    <td data-label="Update" class="action-cell"><button class="update">✏️</button></td>
-                    <td data-label="Delete" class="action-cell"><button class="delete">🗑️</button></td>
-                </tr>
-                <tr data-example="SOR" data-vendor="RapidCourt">
-                    <td data-label="Example Of">SOR</td>
-                    <td data-label="Source Name">Pennsylvania Megan's Law Registry</td>
-                    <td data-label="Vendor">RapidCourt</td>
-                    <td data-label="Update" class="action-cell"><button class="update">✏️</button></td>
-                    <td data-label="Delete" class="action-cell"><button class="delete">🗑️</button></td>
-                </tr>
-                <tr data-example="OIG" data-vendor="SJV">
-                    <td data-label="Example Of">OIG</td>
-                    <td data-label="Source Name">HHS OIG List of Excluded Individuals/Entities (LEIE)</td>
-                    <td data-label="Vendor">SJV</td>
-                    <td data-label="Update" class="action-cell"><button class="update">✏️</button></td>
-                    <td data-label="Delete" class="action-cell"><button class="delete">🗑️</button></td>
-                </tr>
-                <tr data-example="OIG" data-vendor="RapidCourt">
-                    <td data-label="Example Of">OIG</td>
-                    <td data-label="Source Name">SAM.gov Exclusions / Debarment (System for Award Management)</td>
-                    <td data-label="Vendor">RapidCourt</td>
-                    <td data-label="Update" class="action-cell"><button class="update">✏️</button></td>
-                    <td data-label="Delete" class="action-cell"><button class="delete">🗑️</button></td>
-                </tr>
-                <tr data-example="OIG" data-vendor="SJV">
-                    <td data-label="Example Of">OIG</td>
-                    <td data-label="Source Name">State Medicaid Exclusion Lists</td>
-                    <td data-label="Vendor">SJV</td>
-                    <td data-label="Update" class="action-cell"><button class="update">✏️</button></td>
-                    <td data-label="Delete" class="action-cell"><button class="delete">🗑️</button></td>
-                </tr>
-                <tr data-example="OIG" data-vendor="RapidCourt">
-                    <td data-label="Example Of">OIG</td>
-                    <td data-label="Source Name">HUD Debarment / Departmental Enforcement Center (DEC)</td>
-                    <td data-label="Vendor">RapidCourt</td>
-                    <td data-label="Update" class="action-cell"><button class="update">✏️</button></td>
-                    <td data-label="Delete" class="action-cell"><button class="delete">🗑️</button></td>
-                </tr>
-                <tr data-example="OIG" data-vendor="SJV">
-                    <td data-label="Example Of">OIG</td>
-                    <td data-label="Source Name">VA OIG Exclusion References</td>
-                    <td data-label="Vendor">SJV</td>
-                    <td data-label="Update" class="action-cell"><button class="update">✏️</button></td>
-                    <td data-label="Delete" class="action-cell"><button class="delete">🗑️</button></td>
-                </tr>
-                <tr data-example="OIG" data-vendor="RapidCourt">
-                    <td data-label="Example Of">OIG</td>
-                    <td data-label="Source Name">Vendor Guides / OIG vs SAM vs State Exclusions</td>
-                    <td data-label="Vendor">RapidCourt</td>
-                    <td data-label="Update" class="action-cell"><button class="update">✏️</button></td>
-                    <td data-label="Delete" class="action-cell"><button class="delete">🗑️</button></td>
-                </tr>
-                <tr data-example="OIG" data-vendor="SJV">
-                    <td data-label="Example Of">OIG</td>
-                    <td data-label="Source Name">GSA Excluded Parties List System (EPLS)</td>
-                    <td data-label="Vendor">SJV</td>
-                    <td data-label="Update" class="action-cell"><button class="update">✏️</button></td>
-                    <td data-label="Delete" class="action-cell"><button class="delete">🗑️</button></td>
-                </tr>
-                <tr data-example="Global Sanctions" data-vendor="RapidCourt">
-                    <td data-label="Example Of">Global Sanctions</td>
-                    <td data-label="Source Name">OFAC Specially Designated Nationals (SDN) List</td>
-                    <td data-label="Vendor">RapidCourt</td>
-                    <td data-label="Update" class="action-cell"><button class="update">✏️</button></td>
-                    <td data-label="Delete" class="action-cell"><button class="delete">🗑️</button></td>
-                </tr>
-                <tr data-example="Global Sanctions" data-vendor="SJV">
-                    <td data-label="Example Of">Global Sanctions</td>
-                    <td data-label="Source Name">UN Consolidated Sanctions List</td>
-                    <td data-label="Vendor">SJV</td>
-                    <td data-label="Update" class="action-cell"><button class="update">✏️</button></td>
-                    <td data-label="Delete" class="action-cell"><button class="delete">🗑️</button></td>
-                </tr>
-                <tr data-example="Global Sanctions" data-vendor="RapidCourt">
-                    <td data-label="Example Of">Global Sanctions</td>
-                    <td data-label="Source Name">European Union Consolidated Financial Sanctions List</td>
-                    <td data-label="Vendor">RapidCourt</td>
-                    <td data-label="Update" class="action-cell"><button class="update">✏️</button></td>
-                    <td data-label="Delete" class="action-cell"><button class="delete">🗑️</button></td>
-                </tr>
-                <tr data-example="Global Sanctions" data-vendor="SJV">
-                    <td data-label="Example Of">Global Sanctions</td>
-                    <td data-label="Source Name">UK Consolidated Sanctions List</td>
-                    <td data-label="Vendor">SJV</td>
-                    <td data-label="Update" class="action-cell"><button class="update">✏️</button></td>
-                    <td data-label="Delete" class="action-cell"><button class="delete">🗑️</button></td>
-                </tr>
-                <tr data-example="Global Sanctions" data-vendor="RapidCourt">
-                    <td data-label="Example Of">Global Sanctions</td>
-                    <td data-label="Source Name">World Bank Debarred Firms List</td>
-                    <td data-label="Vendor">RapidCourt</td>
-                    <td data-label="Update" class="action-cell"><button class="update">✏️</button></td>
-                    <td data-label="Delete" class="action-cell"><button class="delete">🗑️</button></td>
-                </tr>
-                <tr data-example="Global Sanctions" data-vendor="SJV">
-                    <td data-label="Example Of">Global Sanctions</td>
-                    <td data-label="Source Name">Interpol Red Notices</td>
-                    <td data-label="Vendor">SJV</td>
-                    <td data-label="Update" class="action-cell"><button class="update">✏️</button></td>
-                    <td data-label="Delete" class="action-cell"><button class="delete">🗑️</button></td>
-                </tr>
-                <tr data-example="Terror Watchlist" data-vendor="RapidCourt">
-                    <td data-label="Example Of">Terror Watchlist</td>
-                    <td data-label="Source Name">FBI Terrorist Screening Center (TSC) / TSDB overview</td>
-                    <td data-label="Vendor">RapidCourt</td>
-                    <td data-label="Update" class="action-cell"><button class="update">✏️</button></td>
-                    <td data-label="Delete" class="action-cell"><button class="delete">🗑️</button></td>
-                </tr>
-                <tr data-example="Terror Watchlist" data-vendor="SJV">
-                    <td data-label="Example Of">Terror Watchlist</td>
-                    <td data-label="Source Name">FBI Terrorist Watchlisting Transparency document</td>
-                    <td data-label="Vendor">SJV</td>
-                    <td data-label="Update" class="action-cell"><button class="update">✏️</button></td>
-                    <td data-label="Delete" class="action-cell"><button class="delete">🗑️</button></td>
-                </tr>
-                <tr data-example="Terror Watchlist" data-vendor="RapidCourt">
-                    <td data-label="Example Of">Terror Watchlist</td>
-                    <td data-label="Source Name">Department of State Foreign Terrorist Organizations (FTO)</td>
-                    <td data-label="Vendor">RapidCourt</td>
-                    <td data-label="Update" class="action-cell"><button class="update">✏️</button></td>
-                    <td data-label="Delete" class="action-cell"><button class="delete">🗑️</button></td>
-                </tr>
-                <tr data-example="Terror Watchlist" data-vendor="SJV">
-                    <td data-label="Example Of">Terror Watchlist</td>
-                    <td data-label="Source Name">DHS No Fly List</td>
-                    <td data-label="Vendor">SJV</td>
-                    <td data-label="Update" class="action-cell"><button class="update">✏️</button></td>
-                    <td data-label="Delete" class="action-cell"><button class="delete">🗑️</button></td>
-                </tr>
-                <tr data-example="Terror Watchlist" data-vendor="RapidCourt">
-                    <td data-label="Example Of">Terror Watchlist</td>
-                    <td data-label="Source Name">EU Terrorist List</td>
-                    <td data-label="Vendor">RapidCourt</td>
-                    <td data-label="Update" class="action-cell"><button class="update">✏️</button></td>
-                    <td data-label="Delete" class="action-cell"><button class="delete">🗑️</button></td>
-                </tr>
-            </tbody>
+                </tbody>
         </table>
+    </div>
+
+    <div id="newVendorModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button new-vendor-close">&times;</span>
+            <h3>Add New Vendor Name</h3>
+            <form id="newVendorForm">
+                <label for="newVendorName">New Vendor Name:</label>
+                <input type="text" id="newVendorName" name="newVendorName" required>
+                <button type="submit">Add Vendor</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="addModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button add-close">&times;</span>
+            <h3>Add New Entry</h3>
+            <form id="addForm">
+                <label for="addExampleOf">Example Of:</label>
+                <select id="addExampleOf" name="exampleOf" required>
+                    <option value="SOR">SOR</option>
+                    <option value="OIG">OIG</option>
+                    <option value="Global Sanctions">Global Sanctions</option>
+                    <option value="Terror Watchlist">Terror Watchlist</option>
+                </select>
+                <label for="addSourceName">Source Name:</label>
+                <input type="text" id="addSourceName" name="sourceName" required>
+                <label for="addVendor">Vendor:</label>
+                <select id="addVendor" name="vendor" required>
+                    <option value="RapidCourt">RapidCourt</option>
+                    <option value="SJV">SJV</option>
+                </select>
+                <button type="submit">Add Entry</button>
+            </form>
+        </div>
     </div>
 
     <div id="updateModal" class="modal">
         <div class="modal-content">
-            <span class="close-button">&times;</span>
+            <span class="close-button update-close">&times;</span>
             <h3>Update Entry</h3>
             <form id="updateForm">
                 <input type="hidden" id="rowIndex">
@@ -481,13 +347,90 @@
             const sourceNameFilter = document.getElementById('sourceNameFilter');
             const dataTable = document.getElementById('dataTable');
 
-            const modal = document.getElementById('updateModal');
-            const closeButton = document.querySelector('.close-button');
+            // Data array to manage entries
+            let data = [
+                { example: 'SOR', source: 'Dru Sjodin National Sex Offender Public Website (NSOPW)', vendor: 'RapidCourt' },
+                { example: 'SOR', source: 'California Megan\'s Law (CA DOJ)', vendor: 'SJV' },
+                { example: 'SOR', source: 'Florida FDLE Sexual Offenders & Predators Search', vendor: 'RapidCourt' },
+                { example: 'SOR', source: 'Texas DPS Public Sex Offender Registry', vendor: 'SJV' },
+                { example: 'SOR', source: 'New York DCJS Sex Offender Registry', vendor: 'RapidCourt' },
+                { example: 'SOR', source: 'Illinois State Police Sex Offender Registry', vendor: 'SJV' },
+                { example: 'SOR', source: 'Pennsylvania Megan\'s Law Registry', vendor: 'RapidCourt' },
+                { example: 'OIG', source: 'HHS OIG List of Excluded Individuals/Entities (LEIE)', vendor: 'SJV' },
+                { example: 'OIG', source: 'SAM.gov Exclusions / Debarment', vendor: 'RapidCourt' },
+                { example: 'OIG', source: 'State Medicaid Exclusion Lists', vendor: 'SJV' },
+                { example: 'OIG', source: 'HUD Debarment / Departmental Enforcement Center (DEC)', vendor: 'RapidCourt' },
+                { example: 'OIG', source: 'VA OIG Exclusion References', vendor: 'SJV' },
+                { example: 'OIG', source: 'Vendor Guides / OIG vs SAM vs State Exclusions', vendor: 'RapidCourt' },
+                { example: 'OIG', source: 'GSA Excluded Parties List System (EPLS)', vendor: 'SJV' },
+                { example: 'Global Sanctions', source: 'OFAC Specially Designated Nationals (SDN) List', vendor: 'RapidCourt' },
+                { example: 'Global Sanctions', source: 'UN Consolidated Sanctions List', vendor: 'SJV' },
+                { example: 'Global Sanctions', source: 'European Union Consolidated Financial Sanctions List', vendor: 'RapidCourt' },
+                { example: 'Global Sanctions', source: 'UK Consolidated Sanctions List', vendor: 'SJV' },
+                { example: 'Global Sanctions', source: 'World Bank Debarred Firms List', vendor: 'RapidCourt' },
+                { example: 'Global Sanctions', source: 'Interpol Red Notices', vendor: 'SJV' },
+                { example: 'Terror Watchlist', source: 'FBI Terrorist Screening Center (TSC) / TSDB overview', vendor: 'RapidCourt' },
+                { example: 'Terror Watchlist', source: 'FBI Terrorist Watchlisting Transparency document', vendor: 'SJV' },
+                { example: 'Terror Watchlist', source: 'Department of State Foreign Terrorist Organizations (FTO)', vendor: 'RapidCourt' },
+                { example: 'Terror Watchlist', source: 'DHS No Fly List', vendor: 'SJV' },
+                { example: 'Terror Watchlist', source: 'EU Terrorist List', vendor: 'RapidCourt' }
+            ];
+
+            // New Vendor Modal elements
+            const newVendorModal = document.getElementById('newVendorModal');
+            const newVendorForm = document.getElementById('newVendorForm');
+            const newVendorBtn = document.getElementById('addNewVendorBtn');
+            const newVendorCloseBtn = document.querySelector('.new-vendor-close');
+            
+            // Add Entry Modal elements
+            const addModal = document.getElementById('addModal');
+            const addForm = document.getElementById('addForm');
+            const addBtn = document.getElementById('addBtn');
+            const addCloseBtn = document.querySelector('.add-close');
+            const addVendorSelect = document.getElementById('addVendor');
+
+            // Update Entry Modal elements
+            const updateModal = document.getElementById('updateModal');
             const updateForm = document.getElementById('updateForm');
+            const updateCloseBtn = document.querySelector('.update-close');
+            const modalVendorSelect = document.getElementById('modalVendor');
             const rowIndexInput = document.getElementById('rowIndex');
-            const modalExampleOf = document.getElementById('modalExampleOf');
-            const modalSourceName = document.getElementById('modalSourceName');
-            const modalVendor = document.getElementById('modalVendor');
+
+            const renderTable = () => {
+                dataTable.innerHTML = '';
+                data.forEach((entry, index) => {
+                    const row = document.createElement('tr');
+                    row.setAttribute('data-index', index);
+                    row.setAttribute('data-example', entry.example);
+                    row.setAttribute('data-vendor', entry.vendor);
+                    row.innerHTML = `
+                        <td data-label="Example Of">${entry.example}</td>
+                        <td data-label="Source Name">${entry.source}</td>
+                        <td data-label="Vendor">${entry.vendor}</td>
+                        <td data-label="Update" class="action-cell"><button class="update">✏️</button></td>
+                        <td data-label="Delete" class="action-cell"><button class="delete">🗑️</button></td>
+                    `;
+                    dataTable.appendChild(row);
+                });
+                applyFilters();
+            };
+
+            const updateVendorDropdowns = (newVendor) => {
+                const option1 = document.createElement('option');
+                option1.value = newVendor;
+                option1.textContent = newVendor;
+                vendorFilter.appendChild(option1);
+
+                const option2 = document.createElement('option');
+                option2.value = newVendor;
+                option2.textContent = newVendor;
+                addVendorSelect.appendChild(option2);
+
+                const option3 = document.createElement('option');
+                option3.value = newVendor;
+                option3.textContent = newVendor;
+                modalVendorSelect.appendChild(option3);
+            };
 
             const applyFilters = () => {
                 const rows = dataTable.getElementsByTagName('tr');
@@ -517,54 +460,92 @@
             vendorFilter.addEventListener('change', applyFilters);
             sourceNameFilter.addEventListener('keyup', applyFilters);
 
-            // Open the modal with pre-filled values
+            // Open Add New Vendor Modal
+            newVendorBtn.addEventListener('click', () => {
+                newVendorForm.reset();
+                newVendorModal.style.display = "block";
+            });
+
+            // Handle Add New Vendor Form Submission
+            newVendorForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const newVendorName = document.getElementById('newVendorName').value;
+                if (newVendorName && !Array.from(vendorFilter.options).some(opt => opt.value === newVendorName)) {
+                    updateVendorDropdowns(newVendorName);
+                }
+                newVendorModal.style.display = "none";
+            });
+
+            // Open Add New Entry Modal
+            addBtn.addEventListener('click', () => {
+                addForm.reset();
+                addModal.style.display = "block";
+            });
+
+            // Handle Add New Entry Form Submission
+            addForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const newEntry = {
+                    example: document.getElementById('addExampleOf').value,
+                    source: document.getElementById('addSourceName').value,
+                    vendor: document.getElementById('addVendor').value
+                };
+                data.push(newEntry);
+                renderTable();
+                addModal.style.display = "none";
+            });
+
+            // Open Update Entry Modal and pre-fill fields
             dataTable.addEventListener('click', (e) => {
                 if (e.target.classList.contains('update')) {
                     const row = e.target.closest('tr');
-                    const rowIndex = Array.from(dataTable.children).indexOf(row);
+                    const rowIndex = row.getAttribute('data-index');
+                    const entry = data[rowIndex];
                     
                     rowIndexInput.value = rowIndex;
-                    modalExampleOf.value = row.getAttribute('data-example');
-                    modalSourceName.value = row.cells[1].textContent;
-                    modalVendor.value = row.getAttribute('data-vendor');
+                    document.getElementById('modalExampleOf').value = entry.example;
+                    document.getElementById('modalSourceName').value = entry.source;
+                    document.getElementById('modalVendor').value = entry.vendor;
                     
-                    modal.style.display = "block";
+                    updateModal.style.display = "block";
                 }
                 if (e.target.classList.contains('delete')) {
                     if (confirm('Are you sure you want to delete this row?')) {
-                        e.target.closest('tr').remove();
+                        const row = e.target.closest('tr');
+                        const rowIndex = row.getAttribute('data-index');
+                        data.splice(rowIndex, 1);
+                        renderTable();
                     }
                 }
             });
 
-            // Close the modal
-            closeButton.addEventListener('click', () => {
-                modal.style.display = "none";
-            });
-
-            window.addEventListener('click', (e) => {
-                if (e.target === modal) {
-                    modal.style.display = "none";
-                }
-            });
-
-            // Handle form submission for updates
+            // Handle Update Entry Form Submission
             updateForm.addEventListener('submit', (e) => {
                 e.preventDefault();
                 const rowIndex = rowIndexInput.value;
-                const row = dataTable.children[rowIndex];
-                
-                row.setAttribute('data-example', modalExampleOf.value);
-                row.setAttribute('data-vendor', modalVendor.value);
-                row.cells[0].textContent = modalExampleOf.value;
-                row.cells[1].textContent = modalSourceName.value;
-                row.cells[2].textContent = modalVendor.value;
-
-                modal.style.display = "none";
-                applyFilters(); // Re-apply filters in case the update changes the row's visibility
+                data[rowIndex] = {
+                    example: document.getElementById('modalExampleOf').value,
+                    source: document.getElementById('modalSourceName').value,
+                    vendor: document.getElementById('modalVendor').value
+                };
+                renderTable();
+                updateModal.style.display = "none";
             });
 
-            applyFilters();
+            // Close modals by clicking outside or on the close button
+            document.querySelectorAll('.close-button').forEach(button => {
+                button.addEventListener('click', () => {
+                    button.closest('.modal').style.display = 'none';
+                });
+            });
+
+            window.addEventListener('click', (e) => {
+                if (e.target.classList.contains('modal')) {
+                    e.target.style.display = "none";
+                }
+            });
+
+            renderTable();
         });
     </script>
 </body>
