@@ -182,9 +182,9 @@
         <div class="filter-group">
             <span class="text-sm text-gray-600 self-center font-semibold whitespace-nowrap">Filter:</span>
             
-            <!-- Example OF Filter (Dropdown) -->
+            <!-- Natcrim Filter (Dropdown) -->
             <select id="filterExampleOf" class="filter-input w-32">
-                <option value="">Example OF</option>
+                <option value="">Natcrim</option>
                 <option value="SOR">SOR (Sex Offender Registry)</option>
                 <option value="OIG">OIG (Excluded Individuals/Entities)</option>
                 <option value="TW">TW (Terrorist Watchlist)</option>
@@ -217,7 +217,7 @@
         <table id="dataTable" class="min-w-full divide-y divide-gray-200">
             <thead>
                 <tr>
-                    <th class="text-left px-3 py-2">Example OF</th>
+                    <th class="text-left px-3 py-2">Natcrim</th>
                     <th class="text-left px-3 py-2">Source Name</th>
                     <th class="text-left px-3 py-2">Vendor</th>
                     <th class="text-left px-3 py-2">Update</th>
@@ -240,11 +240,11 @@
         
         <form id="dataForm">
             <div class="space-y-4">
-                <!-- Example OF Dropdown -->
+                <!-- Natcrim Dropdown -->
                 <div>
-                    <label for="exampleOfSelect" class="block text-sm font-medium text-gray-700 mb-1">Example OF:</label> 
+                    <label for="exampleOfSelect" class="block text-sm font-medium text-gray-700 mb-1">Natcrim:</label> 
                     <select id="exampleOfSelect" class="form-input" required title="Indicates the type of registry check (SOR, OIG, or TW)">
-                        <option value="">Select Example OF</option>
+                        <option value="">Select Natcrim</option>
                         <option value="SOR">SOR (Sex Offender Registry)</option>
                         <option value="OIG">OIG (Excluded Individuals/Entities)</option>
                         <option value="TW">TW (Terrorist Watchlist)</option>
@@ -561,7 +561,7 @@
                 let updateDetails = [];
 
                 if (originalItem.exampleOf !== newExampleOf) {
-                    updateDetails.push(`Example OF changed from '${originalItem.exampleOf}' to '${newExampleOf}'`);
+                    updateDetails.push(`Natcrim changed from '${originalItem.exampleOf}' to '${newExampleOf}'`);
                 }
                 if (originalItem.sourceName !== newSourceName) {
                     updateDetails.push(`Source Name changed from '${originalItem.sourceName}' to '${newSourceName}'`);
