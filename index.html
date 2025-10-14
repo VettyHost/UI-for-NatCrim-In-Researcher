@@ -3,550 +3,659 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vendor and Check List</title>
+    <title>Check Source Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Add Font Awesome for Icons (Trash, etc.) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
+        /* BASE STYLES */
         body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-            background-color: #f4f4f4;
-            color: #333;
+            font-family: 'Inter', sans-serif;
+            background-color: #f4f7f9; /* Light background */
         }
-
-        .container {
-            max-width: 1200px;
+        .container-card {
+            max-width: 1300px;
             margin: auto;
-            background: #fff;
-            padding: 20px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            border-radius: 8px;
-        }
-
-        .controls {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
-            margin-bottom: 20px;
-            align-items: center;
-        }
-
-        .controls .filter-group {
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-        }
-
-        .controls .filter-group label {
-            font-weight: bold;
-        }
-
-        .controls .filter-group select,
-        .controls .filter-group input {
-            padding: 8px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            width: 200px;
-        }
-
-        .controls .action-buttons {
-            display: flex;
-            gap: 10px;
-            margin-left: auto;
+            border-radius: 8px; /* Slightly less rounded than before */
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08); /* Subtle shadow */
+            overflow: hidden;
+            background-color: white;
         }
         
-        #addNewVendorBtn {
-            background-color: #6c757d;
-            color: white;
-            padding: 10px 15px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-weight: bold;
+        /* NEW BACK LINK STYLE */
+        .back-link {
+            /* Blue link styling matching the reference */
+            @apply text-blue-600 font-semibold text-sm cursor-pointer hover:text-blue-800 transition duration-150 flex items-center;
+        }
+        .back-link span {
+            /* Styling for the chevron */
+            @apply font-bold text-xl leading-none;
         }
 
-        .controls button {
-            padding: 10px 15px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-weight: bold;
+        /* HEADER AND CONTROL STYLES (Matching Reference Image) */
+        .controls {
+            /* Changed to justify-start to align everything left, and maintained flex-wrap for mobile responsiveness */
+            @apply flex flex-wrap justify-start items-center p-4 border-b border-gray-300;
         }
-
-        #addBtn {
-            background-color: #28a745;
-            color: white;
+        .filter-group {
+            /* This is now the main container for all filters and buttons */
+            @apply flex flex-wrap gap-2;
         }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-
-        table th, table td {
-            padding: 12px;
+        .filter-input {
+            padding: 8px 12px;
             border: 1px solid #ddd;
-            text-align: left;
+            border-radius: 4px;
+            font-size: 14px;
+            @apply shadow-sm focus:outline-none focus:ring-1 focus:ring-blue-500 transition duration-150;
         }
 
-        table th {
-            background-color: #f2f2f2;
-            font-weight: bold;
-            color: #555;
+        /* BUTTON STYLES (Matching Reference Image) */
+        .filter-group button { /* Targeting buttons inside the combined group */
+            padding: 8px 16px;
+            border: 1px solid transparent;
+            border-radius: 4px;
+            font-weight: 500;
+            font-size: 14px;
+            transition: all 0.2s ease;
         }
-
-        table tr:nth-child(even) {
-            background-color: #f9f9f9;
+        .search-btn {
+            background-color: #007bff; /* Primary Blue */
+            color: white;
         }
+        .search-btn:hover { background-color: #0056b3; }
 
-        table tr:hover {
-            background-color: #e9e9e9;
-        }
-
-        .action-cell {
-            white-space: nowrap;
-        }
-
-        .action-cell button {
-            background: none;
-            border: none;
-            cursor: pointer;
-            padding: 0 5px;
-            font-size: 1em;
+        .clear-btn {
+            background-color: transparent;
+            border-color: #007bff;
             color: #007bff;
         }
+        .clear-btn:hover { background-color: #e6f0ff; }
 
-        .action-cell button.delete {
-            color: #dc3545;
+        .primary-btn {
+            background-color: #28a745; /* Green for 'Add Check' */
+            color: white;
         }
+        .primary-btn:hover { background-color: #1e7e34; }
 
-        /* Modal (Popup) Styles */
+        /* TABLE STYLES (Matching Reference Image) */
+        #dataTable {
+            @apply min-w-full divide-y divide-gray-200;
+            font-size: 14px;
+        }
+        #dataTable th {
+            @apply bg-gray-50 text-gray-600 font-semibold uppercase tracking-wider text-xs;
+            padding: 10px 15px;
+            border-right: 1px solid #f3f3f3;
+        }
+        #dataTable td {
+            @apply text-gray-800;
+            padding: 10px 15px;
+            border-right: 1px solid #f3f3f3;
+        }
+        #dataTable tbody tr:hover {
+            background-color: #f8f8f8;
+        }
+        
+        /* Action Button Styling - Changed to Text Color, removed pill background */
+        .action-text-btn {
+            background: none;
+            border: none;
+            padding: 0;
+            cursor: pointer;
+            font-weight: 600;
+            text-decoration: none; /* Removed underline */
+            transition: color 0.15s ease;
+            white-space: nowrap;
+        }
+        .update-btn { color: #cc8400; } /* Darker Yellow/Orange */
+        .delete-btn { 
+            /* Enhanced visibility for the trash icon */
+            color: #dc3545; /* Red */
+            font-size: 18px; 
+            padding: 0 5px;
+        } 
+        .track-btn { color: #007bff; } /* Blue */
+
+        .update-btn:hover { color: #e0a800; text-decoration: underline; }
+        .delete-btn:hover { color: #c82333; }
+        .track-btn:hover { color: #0056b3; text-decoration: underline; }
+
+        /* Modal specific styles */
         .modal {
             display: none;
             position: fixed;
-            z-index: 1;
+            z-index: 1000;
             left: 0;
             top: 0;
             width: 100%;
             height: 100%;
-            overflow: auto;
-            background-color: rgba(0,0,0,0.4);
-            padding-top: 60px;
+            background-color: rgba(0,0,0,0.6);
+            align-items: center;
+            justify-content: center;
         }
-
         .modal-content {
-            background-color: #fefefe;
-            margin: 5% auto;
-            padding: 20px;
-            border: 1px solid #888;
-            width: 80%;
-            max-width: 500px;
-            border-radius: 8px;
-            position: relative;
+            @apply bg-white p-6 md:p-8 rounded-lg shadow-2xl w-11/12 max-w-lg relative;
         }
-
-        .close-button {
-            color: #aaa;
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
+        #historyModal .modal-content {
+            max-width: 700px; 
         }
-
-        .close-button:hover,
-        .close-button:focus {
-            color: black;
-            text-decoration: none;
-            cursor: pointer;
+        .form-input {
+            @apply w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 transition duration-150;
         }
-
-        .modal-content form {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-
-        .modal-content form input,
-        .modal-content form select {
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
-
-        .modal-content form button {
-            padding: 10px;
-            background-color: #28a745;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-weight: bold;
-        }
-
+        
+        /* Responsive adjustments */
         @media (max-width: 768px) {
             .controls {
                 flex-direction: column;
-                align-items: stretch;
+                gap: 10px;
             }
-
-            .controls .filter-group select,
-            .controls .filter-group input {
+            .filter-group {
                 width: 100%;
+                /* Filters and buttons wrap on mobile */
+                flex-wrap: wrap; 
             }
-
-            .controls .action-buttons {
-                justify-content: space-around;
+            .filter-group > * {
+                flex-grow: 1; /* Filters take equal width */
             }
-
-            table, thead, tbody, th, td, tr {
-                display: block;
-            }
-
-            thead tr {
-                display: none;
-            }
-
-            tr {
-                margin-bottom: 15px;
-                border: 1px solid #ddd;
-                border-radius: 8px;
-            }
-
-            td {
-                border: none;
-                position: relative;
-                padding-left: 50%;
-                text-align: right;
-            }
-
-            td:before {
-                content: attr(data-label);
-                position: absolute;
-                left: 10px;
-                width: calc(50% - 20px);
-                text-align: left;
-                font-weight: bold;
-                color: #555;
-            }
-
-            .modal-content {
-                width: 90%;
-            }
+        }
+        /* Specific highlight styles for character diff */
+        .break-words {
+            word-break: break-all;
         }
     </style>
 </head>
-<body>
-    <div class="container">
-        <h2>Vendor and Check Management</h2>
-        <div class="controls">
-            <div class="filter-group">
-                <label for="exampleOfFilter">Example Of:</label>
-                <select id="exampleOfFilter">
-                    <option value="">All</option>
-                    <option value="SOR">SOR</option>
-                    <option value="OIG">OIG</option>
-                    <option value="Global Sanctions">Global Sanctions</option>
-                    <option value="Terror Watchlist">Terror Watchlist</option>
-                </select>
-            </div>
-            <div class="filter-group">
-                <label for="vendorFilter">Vendor:</label>
-                <select id="vendorFilter">
-                    <option value="">All</option>
-                    <option value="RapidCourt">RapidCourt</option>
-                    <option value="SJV">SJV</option>
-                </select>
-            </div>
-            <div class="filter-group">
-                <label for="sourceNameFilter">Source Name:</label>
-                <input type="text" id="sourceNameFilter" placeholder="Search Source Name...">
-            </div>
-            <div class="action-buttons">
-                <button id="addBtn">Add New</button>
-                <button id="addNewVendorBtn">Add New Vendor</button>
-            </div>
+<body class="p-4 md:p-8">
+
+<div class="container-card">
+    
+    <!-- BACK BUTTON SECTION -->
+    <div class="p-4 pb-2">
+        <a href="#" onclick="history.back(); return false;" class="back-link">
+            <span class="text-xl leading-none mr-1">&lt;</span> Back
+        </a>
+    </div>
+    
+    <!-- Header and Controls (Now a single combined row for filters and actions) -->
+    <div class="controls" id="filterControls">
+        
+        <!-- Filter Group (COMBINED: Filters and Buttons are in one row) -->
+        <div class="filter-group">
+            <span class="text-sm text-gray-600 self-center font-semibold whitespace-nowrap">Filter:</span>
+            
+            <!-- Example OF Filter (Dropdown) -->
+            <select id="filterExampleOf" class="filter-input w-32">
+                <option value="">Example OF</option>
+                <option value="SOR">SOR (Sex Offender Registry)</option>
+                <option value="OIG">OIG (Excluded Individuals/Entities)</option>
+                <option value="TW">TW (Terrorist Watchlist)</option>
+            </select>
+            
+            <!-- Vendor Filter (Dropdown) -->
+            <select id="filterVendor" class="filter-input w-32">
+                <option value="">Vendor</option>
+                <option value="SJV">SJV</option>
+                <option value="Rapidcourt">Rapidcourt</option>
+            </select>
+            
+            <!-- Source Name Filter (Text Search) -->
+            <input 
+                type="text" 
+                id="filterSourceName" 
+                placeholder="Source Name" 
+                class="filter-input w-48"
+            >
+
+            <!-- Action Buttons (Now part of the filter group for single-row alignment) -->
+            <button id="searchFilterBtn" class="search-btn">Search</button>
+            <button id="clearFilterBtn" class="clear-btn">Clear Filters</button>
+            <button id="addCheckBtn" class="primary-btn">Add New Check</button>
         </div>
-        <table>
+    </div>
+
+    <!-- Data Table -->
+    <div class="table-container p-4 md:p-6 overflow-x-auto">
+        <table id="dataTable" class="min-w-full divide-y divide-gray-200">
             <thead>
                 <tr>
-                    <th>Example Of</th>
-                    <th>Source Name</th>
-                    <th>Vendor</th>
-                    <th>Update</th>
-                    <th>Delete</th>
+                    <th class="text-left px-3 py-2">Example OF</th>
+                    <th class="text-left px-3 py-2">Source Name</th>
+                    <th class="text-left px-3 py-2">Vendor</th>
+                    <th class="text-left px-3 py-2">Update</th>
+                    <th class="text-left px-3 py-2">Delete</th>
+                    <th class="text-left px-3 py-2">History</th> 
                 </tr>
             </thead>
-            <tbody id="dataTable">
-                </tbody>
+            <tbody class="divide-y divide-gray-100">
+                <!-- Data rows populated by JavaScript -->
+            </tbody>
         </table>
     </div>
+</div>
 
-    <div id="newVendorModal" class="modal">
-        <div class="modal-content">
-            <span class="close-button new-vendor-close">&times;</span>
-            <h3>Add New Vendor Name</h3>
-            <form id="newVendorForm">
-                <label for="newVendorName">New Vendor Name:</label>
-                <input type="text" id="newVendorName" name="newVendorName" required>
-                <button type="submit">Add Vendor</button>
-            </form>
+<!-- Add/Update Modal -->
+<div id="addUpdateModal" class="modal">
+    <div class="modal-content">
+        <button class="close-button absolute top-3 right-5 text-gray-400 hover:text-gray-700 text-3xl font-light leading-none" onclick="closeModal('addUpdateModal')">&times;</button>
+        <h2 id="modalTitle" class="text-2xl font-bold text-gray-800 mb-6 text-center"></h2>
+        
+        <form id="dataForm">
+            <div class="space-y-4">
+                <!-- Example OF Dropdown -->
+                <div>
+                    <label for="exampleOfSelect" class="block text-sm font-medium text-gray-700 mb-1">Example OF:</label> 
+                    <select id="exampleOfSelect" class="form-input" required title="Indicates the type of registry check (SOR, OIG, or TW)">
+                        <option value="">Select Example OF</option>
+                        <option value="SOR">SOR (Sex Offender Registry)</option>
+                        <option value="OIG">OIG (Excluded Individuals/Entities)</option>
+                        <option value="TW">TW (Terrorist Watchlist)</option>
+                    </select>
+                </div>
+                
+                <!-- Source Name Input -->
+                <div>
+                    <label for="sourceName" class="block text-sm font-medium text-gray-700 mb-1">Source Name:</label>
+                    <input type="text" id="sourceName" class="form-input" required title="The official name of the exclusion list or registry." placeholder="e.g., California Megan's Law (CA DOJ)">
+                </div>
+                
+                <!-- Vendor Dropdown -->
+                <div>
+                    <label for="vendorSelect" class="block text-sm font-medium text-gray-700 mb-1">Vendor:</label>
+                    <select id="vendorSelect" class="form-input" required title="Select the third-party vendor responsible for this check.">
+                        <option value="">Select Vendor</option>
+                        <option value="SJV">SJV</option>
+                        <option value="Rapidcourt">Rapidcourt</option>
+                    </select>
+                </div>
+            </div>
+            <button type="submit" id="saveBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg mt-6 transition duration-150 shadow-lg"></button>
+        </form>
+    </div>
+</div>
+
+<!-- History Modal -->
+<div id="historyModal" class="modal">
+    <div class="modal-content">
+        <button class="close-button absolute top-3 right-5 text-gray-400 hover:text-gray-700 text-3xl font-light leading-none" onclick="closeModal('historyModal')">&times;</button>
+        
+        <div class="bg-gray-50 p-4 rounded-lg max-h-96 overflow-y-auto mt-4">
+            <h3 class="text-lg font-semibold text-gray-800 mb-3">
+                Tracking History for: <span id="historySourceName" class="text-indigo-600 font-bold"></span>
+            </h3>
+            <ul id="historyList" class="space-y-4">
+                <!-- History entries will be populated here -->
+            </ul>
         </div>
     </div>
+</div>
 
-    <div id="addModal" class="modal">
-        <div class="modal-content">
-            <span class="close-button add-close">&times;</span>
-            <h3>Add New Entry</h3>
-            <form id="addForm">
-                <label for="addExampleOf">Example Of:</label>
-                <select id="addExampleOf" name="exampleOf" required>
-                    <option value="SOR">SOR</option>
-                    <option value="OIG">OIG</option>
-                    <option value="Global Sanctions">Global Sanctions</option>
-                    <option value="Terror Watchlist">Terror Watchlist</option>
-                </select>
-                <label for="addSourceName">Source Name:</label>
-                <input type="text" id="addSourceName" name="sourceName" required>
-                <label for="addVendor">Vendor:</label>
-                <select id="addVendor" name="vendor" required>
-                    <option value="RapidCourt">RapidCourt</option>
-                    <option value="SJV">SJV</option>
-                </select>
-                <button type="submit">Add Entry</button>
-            </form>
-        </div>
-    </div>
+<script>
+    // --- CHARACTER DIFF LOGIC (RETAINED) ---
+    const diffAndHighlightCharLevel = (oldVal, newVal) => {
+        let oldOutput = '';
+        let newOutput = '';
+        
+        const maxLen = Math.max(oldVal.length, newVal.length);
 
-    <div id="updateModal" class="modal">
-        <div class="modal-content">
-            <span class="close-button update-close">&times;</span>
-            <h3>Update Entry</h3>
-            <form id="updateForm">
-                <input type="hidden" id="rowIndex">
-                <label for="modalExampleOf">Example Of:</label>
-                <select id="modalExampleOf" name="exampleOf" required>
-                    <option value="SOR">SOR</option>
-                    <option value="OIG">OIG</option>
-                    <option value="Global Sanctions">Global Sanctions</option>
-                    <option value="Terror Watchlist">Terror Watchlist</option>
-                </select>
-                <label for="modalSourceName">Source Name:</label>
-                <input type="text" id="modalSourceName" name="sourceName" required>
-                <label for="modalVendor">Vendor:</label>
-                <select id="modalVendor" name="vendor" required>
-                    <option value="RapidCourt">RapidCourt</option>
-                    <option value="SJV">SJV</option>
-                </select>
-                <button type="submit">Save Updates</button>
-            </form>
-        </div>
-    </div>
+        for (let i = 0; i < maxLen; i++) {
+            const oldChar = oldVal[i] || '';
+            const newChar = newVal[i] || '';
 
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const exampleOfFilter = document.getElementById('exampleOfFilter');
-            const vendorFilter = document.getElementById('vendorFilter');
-            const sourceNameFilter = document.getElementById('sourceNameFilter');
-            const dataTable = document.getElementById('dataTable');
+            if (oldChar === newChar) {
+                oldOutput += oldChar;
+                newOutput += newChar;
+            } else {
+                if (oldChar) {
+                    oldOutput += `<span class="bg-red-200 text-red-800 font-bold">${oldChar}</span>`;
+                }
+                if (newChar) {
+                    newOutput += `<span class="bg-green-200 text-green-800 font-bold">${newChar}</span>`;
+                }
+            }
+        }
+        return { old: oldOutput, new: newOutput };
+    };
 
-            // Data array to manage entries
-            let data = [
-                { example: 'SOR', source: 'Dru Sjodin National Sex Offender Public Website (NSOPW)', vendor: 'RapidCourt' },
-                { example: 'SOR', source: 'California Megan\'s Law (CA DOJ)', vendor: 'SJV' },
-                { example: 'SOR', source: 'Florida FDLE Sexual Offenders & Predators Search', vendor: 'RapidCourt' },
-                { example: 'SOR', source: 'Texas DPS Public Sex Offender Registry', vendor: 'SJV' },
-                { example: 'SOR', source: 'New York DCJS Sex Offender Registry', vendor: 'RapidCourt' },
-                { example: 'SOR', source: 'Illinois State Police Sex Offender Registry', vendor: 'SJV' },
-                { example: 'SOR', source: 'Pennsylvania Megan\'s Law Registry', vendor: 'RapidCourt' },
-                { example: 'OIG', source: 'HHS OIG List of Excluded Individuals/Entities (LEIE)', vendor: 'SJV' },
-                { example: 'OIG', source: 'SAM.gov Exclusions / Debarment', vendor: 'RapidCourt' },
-                { example: 'OIG', source: 'State Medicaid Exclusion Lists', vendor: 'SJV' },
-                { example: 'OIG', source: 'HUD Debarment / Departmental Enforcement Center (DEC)', vendor: 'RapidCourt' },
-                { example: 'OIG', source: 'VA OIG Exclusion References', vendor: 'SJV' },
-                { example: 'OIG', source: 'Vendor Guides / OIG vs SAM vs State Exclusions', vendor: 'RapidCourt' },
-                { example: 'OIG', source: 'GSA Excluded Parties List System (EPLS)', vendor: 'SJV' },
-                { example: 'Global Sanctions', source: 'OFAC Specially Designated Nationals (SDN) List', vendor: 'RapidCourt' },
-                { example: 'Global Sanctions', source: 'UN Consolidated Sanctions List', vendor: 'SJV' },
-                { example: 'Global Sanctions', source: 'European Union Consolidated Financial Sanctions List', vendor: 'RapidCourt' },
-                { example: 'Global Sanctions', source: 'UK Consolidated Sanctions List', vendor: 'SJV' },
-                { example: 'Global Sanctions', source: 'World Bank Debarred Firms List', vendor: 'RapidCourt' },
-                { example: 'Global Sanctions', source: 'Interpol Red Notices', vendor: 'SJV' },
-                { example: 'Terror Watchlist', source: 'FBI Terrorist Screening Center (TSC) / TSDB overview', vendor: 'RapidCourt' },
-                { example: 'Terror Watchlist', source: 'FBI Terrorist Watchlisting Transparency document', vendor: 'SJV' },
-                { example: 'Terror Watchlist', source: 'Department of State Foreign Terrorist Organizations (FTO)', vendor: 'RapidCourt' },
-                { example: 'Terror Watchlist', source: 'DHS No Fly List', vendor: 'SJV' },
-                { example: 'Terror Watchlist', source: 'EU Terrorist List', vendor: 'RapidCourt' }
-            ];
-
-            // New Vendor Modal elements
-            const newVendorModal = document.getElementById('newVendorModal');
-            const newVendorForm = document.getElementById('newVendorForm');
-            const newVendorBtn = document.getElementById('addNewVendorBtn');
-            const newVendorCloseBtn = document.querySelector('.new-vendor-close');
+    const highlightChangesInDescription = (description) => {
+        const regex = /'([^']*)'/g; 
+        const values = [];
+        let match;
+        while (match = regex.exec(description)) {
+            values.push(match[1]);
+        }
+        
+        if (values.length === 2) {
+            const oldValue = values[0];
+            const newValue = values[1];
             
-            // Add Entry Modal elements
-            const addModal = document.getElementById('addModal');
-            const addForm = document.getElementById('addForm');
-            const addBtn = document.getElementById('addBtn');
-            const addCloseBtn = document.querySelector('.add-close');
-            const addVendorSelect = document.getElementById('addVendor');
+            const fieldName = description.split(' ')[0];
+            
+            const highlighted = diffAndHighlightCharLevel(oldValue, newValue);
+            
+            return `
+                ${fieldName} changed: 
+                <span class="inline-block px-2 py-0.5 rounded-md bg-red-100 text-red-800 text-xs mr-2">OLD</span>
+                <span class="break-words">${highlighted.old}</span>
+                <span class="mx-2 text-gray-500 font-semibold">→</span>
+                <span class="inline-block px-2 py-0.5 rounded-md bg-green-100 text-green-800 text-xs mr-2">NEW</span>
+                <span class="break-words">${highlighted.new}</span>
+            `;
+        } else {
+            return description;
+        }
+    };
+    // --- END CHARACTER DIFF LOGIC ---
 
-            // Update Entry Modal elements
-            const updateModal = document.getElementById('updateModal');
-            const updateForm = document.getElementById('updateForm');
-            const updateCloseBtn = document.querySelector('.update-close');
-            const modalVendorSelect = document.getElementById('modalVendor');
-            const rowIndexInput = document.getElementById('rowIndex');
 
-            const renderTable = () => {
-                dataTable.innerHTML = '';
-                data.forEach((entry, index) => {
-                    const row = document.createElement('tr');
-                    row.setAttribute('data-index', index);
-                    row.setAttribute('data-example', entry.example);
-                    row.setAttribute('data-vendor', entry.vendor);
-                    row.innerHTML = `
-                        <td data-label="Example Of">${entry.example}</td>
-                        <td data-label="Source Name">${entry.source}</td>
-                        <td data-label="Vendor">${entry.vendor}</td>
-                        <td data-label="Update" class="action-cell"><button class="update">✏️</button></td>
-                        <td data-label="Delete" class="action-cell"><button class="delete">🗑️</button></td>
-                    `;
-                    dataTable.appendChild(row);
-                });
-                applyFilters();
-            };
+    document.addEventListener('DOMContentLoaded', () => {
+        const dataTableBody = document.querySelector('#dataTable tbody');
+        
+        // Filter Elements
+        const filterExampleOf = document.getElementById('filterExampleOf');
+        const filterVendor = document.getElementById('filterVendor');
+        const filterSourceName = document.getElementById('filterSourceName');
+        
+        // New Buttons
+        const searchFilterBtn = document.getElementById('searchFilterBtn');
+        const clearFilterBtn = document.getElementById('clearFilterBtn');
 
-            const updateVendorDropdowns = (newVendor) => {
-                const option1 = document.createElement('option');
-                option1.value = newVendor;
-                option1.textContent = newVendor;
-                vendorFilter.appendChild(option1);
+        const addCheckBtn = document.getElementById('addCheckBtn');
+        const addUpdateModal = document.getElementById('addUpdateModal');
+        const historyModal = document.getElementById('historyModal');
+        const modalTitle = document.getElementById('modalTitle');
+        const dataForm = document.getElementById('dataForm');
+        const saveBtn = document.getElementById('saveBtn');
+        
+        // Modal Select Fields
+        const exampleOfSelect = document.getElementById('exampleOfSelect');
+        const vendorSelect = document.getElementById('vendorSelect');
+        const sourceNameInput = document.getElementById('sourceName');
+        
+        const initialTimestamp = (new Date()).toLocaleString();
+        
+        // --- DATA ARRAY ---
+        let data = [
+            // --- SOR (Sex Offender Registry) Entries (7 Total) ---
+            { exampleOf: 'SOR', sourceName: 'Dru Sjodin National Sex Offender Public Website (NSOPW)', vendor: 'SJV', 
+              history: [{ timestamp: initialTimestamp, updateDetails: 'Initial creation.' }] },
+            { exampleOf: 'SOR', sourceName: 'California Megan’s Law (CA DOJ)', vendor: 'Rapidcourt', 
+              history: [{ timestamp: initialTimestamp, updateDetails: 'Initial creation.' }] },
+            { exampleOf: 'SOR', sourceName: 'Florida FDLE Sexual Offenders & Predators Search', vendor: 'SJV', 
+              history: [{ timestamp: initialTimestamp, updateDetails: 'Initial creation.' }] },
+            { exampleOf: 'SOR', sourceName: 'Texas DPS Public Sex Offender Registry', vendor: 'Rapidcourt', 
+              history: [{ timestamp: initialTimestamp, updateDetails: 'Initial creation.' }] },
+            { exampleOf: 'SOR', sourceName: 'New York DCJS Sex Offender Registry', vendor: 'SJV', 
+              history: [{ timestamp: initialTimestamp, updateDetails: 'Initial creation.' }] },
+            { exampleOf: 'SOR', sourceName: 'Illinois State Police Sex Offender Registry', vendor: 'Rapidcourt', 
+              history: [{ timestamp: initialTimestamp, updateDetails: 'Initial creation.' }] },
+            { exampleOf: 'SOR', sourceName: 'Pennsylvania Megan’s Law Registry', vendor: 'SJV', 
+              history: [{ timestamp: initialTimestamp, updateDetails: 'Initial creation.' }] },
 
-                const option2 = document.createElement('option');
-                option2.value = newVendor;
-                option2.textContent = newVendor;
-                addVendorSelect.appendChild(option2);
+            // --- OIG (Excluded Individuals/Entities) Entries (6 Total) ---
+            { exampleOf: 'OIG', sourceName: 'HHS OIG List of Excluded Individuals/Entities (LEIE)', vendor: 'Rapidcourt', 
+              history: [{ timestamp: initialTimestamp, updateDetails: 'Initial creation.' }] },
+            { exampleOf: 'OIG', sourceName: 'SAM.gov Exclusions / Debarment (System for Award Management)', vendor: 'SJV', 
+              history: [{ timestamp: initialTimestamp, updateDetails: 'Initial creation.' }] },
+            { exampleOf: 'OIG', sourceName: 'State Medicaid Exclusion Lists', vendor: 'Rapidcourt', 
+              history: [{ timestamp: initialTimestamp, updateDetails: 'Initial creation.' }] },
+            { exampleOf: 'OIG', sourceName: 'HUD Debarment / Departmental Enforcement Center (DEC)', vendor: 'SJV', 
+              history: [{ timestamp: initialTimestamp, updateDetails: 'Initial creation.' }] },
+            { exampleOf: 'OIG', sourceName: 'VA OIG Exclusion References', vendor: 'Rapidcourt', 
+              history: [{ timestamp: initialTimestamp, updateDetails: 'Initial creation.' }] },
+            { exampleOf: 'OIG', sourceName: 'Vendor Guides / OIG vs SAM vs State Exclusions', vendor: 'SJV', 
+              history: [{ timestamp: initialTimestamp, updateDetails: 'Initial creation.' }] },
 
-                const option3 = document.createElement('option');
-                option3.value = newVendor;
-                option3.textContent = newVendor;
-                modalVendorSelect.appendChild(option3);
-            };
+            // --- TW (Terrorist Watchlist) Entries (7 Total) ---
+            { exampleOf: 'TW', sourceName: 'FBI Terrorist Screening Center (TSC) / TSDB overview', vendor: 'Rapidcourt', 
+              history: [{ timestamp: initialTimestamp, updateDetails: 'Initial creation.' }] },
+            { exampleOf: 'TW', sourceName: 'FBI Terrorist Watchlisting Transparency document', vendor: 'SJV', 
+              history: [{ timestamp: initialTimestamp, updateDetails: 'Initial creation.' }] },
+            { exampleOf: 'TW', sourceName: 'U.S. Dept. of State Foreign Terrorist Organizations (FTO) list', vendor: 'Rapidcourt', 
+              history: [{ timestamp: initialTimestamp, updateDetails: 'Initial creation.' }] },
+            { exampleOf: 'TW', sourceName: 'OFAC (Treasury) Specially Designated Nationals (SDN) List', vendor: 'SJV', 
+              history: [{ timestamp: initialTimestamp, updateDetails: 'Initial creation.' }] },
+            { exampleOf: 'TW', sourceName: 'TSA / No Fly List & Traveler Redress', vendor: 'Rapidcourt', 
+              history: [{ timestamp: initialTimestamp, updateDetails: 'Initial creation.' }] },
+            { exampleOf: 'TW', sourceName: 'GAO Oversight Reports on Terrorist Watchlists', vendor: 'SJV', 
+              history: [{ timestamp: initialTimestamp, updateDetails: 'Initial creation.' }] },
+            { exampleOf: 'TW', sourceName: 'Executive Orders / State Dept sanctions (EO 13224 etc.)', vendor: 'Rapidcourt', 
+              history: [{ timestamp: initialTimestamp, updateDetails: 'Initial creation.' }] },
+        ];
+        // --- END DATA ARRAY ---
 
-            const applyFilters = () => {
-                const rows = dataTable.getElementsByTagName('tr');
-                const exampleFilterValue = exampleOfFilter.value.toLowerCase();
-                const vendorFilterValue = vendorFilter.value.toLowerCase();
-                const sourceNameFilterValue = sourceNameFilter.value.toLowerCase();
+        let isUpdating = false;
+        let updatingIndex = -1;
 
-                for (let i = 0; i < rows.length; i++) {
-                    const row = rows[i];
-                    const exampleOf = row.getAttribute('data-example').toLowerCase();
-                    const vendor = row.getAttribute('data-vendor').toLowerCase();
-                    const sourceName = row.cells[1].textContent.toLowerCase();
+        // Function to render the table
+        const renderTable = (dataToRender) => {
+            dataTableBody.innerHTML = '';
+            if (dataToRender.length === 0) {
+                dataTableBody.innerHTML = '<tr><td colspan="6" class="p-4 text-center text-gray-500">No results found matching your filter.</td></tr>';
+                return;
+            }
+            dataToRender.forEach((item, index) => {
+                const row = document.createElement('tr');
+                row.className = 'hover:bg-gray-50 transition duration-100';
+                row.innerHTML = `
+                    <td class="px-6 py-4 whitespace-nowrap">${item.exampleOf}</td>
+                    <td class="px-6 py-4">${item.sourceName}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">${item.vendor}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <button class="action-text-btn update-btn" data-index="${index}">Update</button>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <button class="action-text-btn delete-btn" data-index="${index}" title="Delete Record"><i class="fas fa-trash-can"></i></button>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <button class="action-text-btn track-btn" data-index="${index}">Track</button>
+                    </td>
+                `;
+                dataTableBody.appendChild(row);
+            });
+        };
 
-                    const matchesExample = exampleFilterValue === '' || exampleOf === exampleFilterValue;
-                    const matchesVendor = vendorFilterValue === '' || vendor === vendorFilterValue;
-                    const matchesSourceName = sourceName.includes(sourceNameFilterValue);
+        // Function to filter the data based on all three criteria (Triggered by Search/Clear)
+        const applyFilters = () => {
+            const selectedExampleOf = filterExampleOf.value;
+            const selectedVendor = filterVendor.value;
+            const searchTermSourceName = filterSourceName.value.trim().toLowerCase();
 
-                    if (matchesExample && matchesVendor && matchesSourceName) {
-                        row.style.display = '';
-                    } else {
-                        row.style.display = 'none';
-                    }
-                }
-            };
+            const filteredData = data.filter(item => {
+                const matchesExampleOf = !selectedExampleOf || item.exampleOf === selectedExampleOf;
+                const matchesVendor = !selectedVendor || item.vendor === selectedVendor;
+                const matchesSourceName = !searchTermSourceName || item.sourceName.toLowerCase().includes(searchTermSourceName);
 
-            exampleOfFilter.addEventListener('change', applyFilters);
-            vendorFilter.addEventListener('change', applyFilters);
-            sourceNameFilter.addEventListener('keyup', applyFilters);
-
-            // Open Add New Vendor Modal
-            newVendorBtn.addEventListener('click', () => {
-                newVendorForm.reset();
-                newVendorModal.style.display = "block";
+                return matchesExampleOf && matchesVendor && matchesSourceName;
             });
 
-            // Handle Add New Vendor Form Submission
-            newVendorForm.addEventListener('submit', (e) => {
-                e.preventDefault();
-                const newVendorName = document.getElementById('newVendorName').value;
-                if (newVendorName && !Array.from(vendorFilter.options).some(opt => opt.value === newVendorName)) {
-                    updateVendorDropdowns(newVendorName);
-                }
-                newVendorModal.style.display = "none";
-            });
+            renderTable(filteredData);
+        };
 
-            // Open Add New Entry Modal
-            addBtn.addEventListener('click', () => {
-                addForm.reset();
-                addModal.style.display = "block";
-            });
+        // --- BUTTON HANDLERS ---
+        searchFilterBtn.addEventListener('click', applyFilters);
 
-            // Handle Add New Entry Form Submission
-            addForm.addEventListener('submit', (e) => {
-                e.preventDefault();
-                const newEntry = {
-                    example: document.getElementById('addExampleOf').value,
-                    source: document.getElementById('addSourceName').value,
-                    vendor: document.getElementById('addVendor').value
-                };
-                data.push(newEntry);
-                renderTable();
-                addModal.style.display = "none";
-            });
-
-            // Open Update Entry Modal and pre-fill fields
-            dataTable.addEventListener('click', (e) => {
-                if (e.target.classList.contains('update')) {
-                    const row = e.target.closest('tr');
-                    const rowIndex = row.getAttribute('data-index');
-                    const entry = data[rowIndex];
-                    
-                    rowIndexInput.value = rowIndex;
-                    document.getElementById('modalExampleOf').value = entry.example;
-                    document.getElementById('modalSourceName').value = entry.source;
-                    document.getElementById('modalVendor').value = entry.vendor;
-                    
-                    updateModal.style.display = "block";
-                }
-                if (e.target.classList.contains('delete')) {
-                    if (confirm('Are you sure you want to delete this row?')) {
-                        const row = e.target.closest('tr');
-                        const rowIndex = row.getAttribute('data-index');
-                        data.splice(rowIndex, 1);
-                        renderTable();
-                    }
-                }
-            });
-
-            // Handle Update Entry Form Submission
-            updateForm.addEventListener('submit', (e) => {
-                e.preventDefault();
-                const rowIndex = rowIndexInput.value;
-                data[rowIndex] = {
-                    example: document.getElementById('modalExampleOf').value,
-                    source: document.getElementById('modalSourceName').value,
-                    vendor: document.getElementById('modalVendor').value
-                };
-                renderTable();
-                updateModal.style.display = "none";
-            });
-
-            // Close modals by clicking outside or on the close button
-            document.querySelectorAll('.close-button').forEach(button => {
-                button.addEventListener('click', () => {
-                    button.closest('.modal').style.display = 'none';
-                });
-            });
-
-            window.addEventListener('click', (e) => {
-                if (e.target.classList.contains('modal')) {
-                    e.target.style.display = "none";
-                }
-            });
-
-            renderTable();
+        clearFilterBtn.addEventListener('click', () => {
+            filterExampleOf.value = '';
+            filterVendor.value = '';
+            filterSourceName.value = '';
+            applyFilters();
         });
-    </script>
+        // --- END BUTTON HANDLERS ---
+        
+        // Initial table render
+        renderTable(data);
+
+        // Universal Modal Close Function
+        window.closeModal = (modalId) => {
+            document.getElementById(modalId).style.display = 'none';
+            if (modalId === 'addUpdateModal') {
+                 dataForm.reset();
+            }
+        };
+
+        const openModal = (mode, index = -1) => {
+            isUpdating = mode === 'update';
+            updatingIndex = index;
+            modalTitle.textContent = isUpdating ? 'Update Existing Check' : 'Add New Check';
+            saveBtn.textContent = isUpdating ? 'Save Changes' : 'Add Check';
+
+            if (isUpdating) {
+                const item = data[index];
+                exampleOfSelect.value = item.exampleOf;
+                sourceNameInput.value = item.sourceName;
+                vendorSelect.value = item.vendor;
+            } else {
+                dataForm.reset();
+            }
+            addUpdateModal.style.display = 'flex';
+        };
+
+        // Show History Modal Function
+        const showHistoryModal = (item) => {
+            document.getElementById('historySourceName').textContent = item.sourceName;
+            const historyList = document.getElementById('historyList');
+            historyList.innerHTML = ''; 
+
+            if (item.history.length === 0) {
+                historyList.innerHTML = '<li class="text-gray-500">No history found for this source.</li>';
+                return;
+            }
+
+            item.history.slice().reverse().forEach(entry => { 
+                const li = document.createElement('li');
+                li.className = 'border-b border-gray-200 pb-2 last:border-b-0';
+                
+                const highlightedDetails = highlightChangesInDescription(entry.updateDetails);
+                
+                li.innerHTML = `
+                    <p class="font-bold text-gray-700">${entry.timestamp}</p>
+                    <p class="text-sm text-gray-600">${highlightedDetails}</p>
+                `;
+                historyList.appendChild(li);
+            });
+
+            historyModal.style.display = 'flex';
+        }
+
+        addCheckBtn.addEventListener('click', () => openModal('add'));
+        
+        window.onclick = function(event) {
+            if (event.target == addUpdateModal) {
+                closeModal('addUpdateModal');
+            }
+            if (event.target == historyModal) {
+                closeModal('historyModal');
+            }
+        };
+
+        // Form Submission (Add/Update Logic)
+        dataForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const newExampleOf = exampleOfSelect.value;
+            const newSourceName = sourceNameInput.value.trim();
+            const newVendor = vendorSelect.value;
+            const now = (new Date()).toLocaleString();
+
+            if (isUpdating) {
+                const originalItem = data[updatingIndex];
+                let updateDetails = [];
+
+                if (originalItem.exampleOf !== newExampleOf) {
+                    updateDetails.push(`Example OF changed from '${originalItem.exampleOf}' to '${newExampleOf}'`);
+                }
+                if (originalItem.sourceName !== newSourceName) {
+                    updateDetails.push(`Source Name changed from '${originalItem.sourceName}' to '${newSourceName}'`);
+                }
+                if (originalItem.vendor !== newVendor) {
+                    updateDetails.push(`Vendor changed from '${originalItem.vendor}' to '${newVendor}'`);
+                }
+
+                if (updateDetails.length > 0) {
+                    originalItem.history.push({ 
+                        timestamp: now, 
+                        updateDetails: updateDetails.join(', ') 
+                    });
+                } else {
+                     originalItem.history.push({ 
+                        timestamp: now, 
+                        updateDetails: 'No changes detected, record touched up.' 
+                    });
+                }
+                
+                originalItem.exampleOf = newExampleOf;
+                originalItem.sourceName = newSourceName;
+                originalItem.vendor = newVendor;
+
+            } else {
+                data.push({ 
+                    exampleOf: newExampleOf, 
+                    sourceName: newSourceName, 
+                    vendor: newVendor,
+                    history: [{ timestamp: now, updateDetails: 'New record created.' }]
+                });
+            }
+            
+            applyFilters(); // Re-render table, respecting current filters
+            closeModal('addUpdateModal');
+        });
+
+        // Delegate Table Actions (Update, Delete, and Track)
+        dataTableBody.addEventListener('click', (e) => {
+            
+            // Recalculate the data currently being displayed
+            const filteredData = data.filter(item => {
+                const selectedExampleOf = filterExampleOf.value;
+                const selectedVendor = filterVendor.value;
+                const searchTermSourceName = filterSourceName.value.trim().toLowerCase();
+
+                const matchesExampleOf = !selectedExampleOf || item.exampleOf === selectedExampleOf;
+                const matchesVendor = !selectedVendor || item.vendor === selectedVendor;
+                const matchesSourceName = !searchTermSourceName || item.sourceName.toLowerCase().includes(searchTermSourceName);
+
+                return matchesExampleOf && matchesVendor && matchesSourceName;
+            });
+            
+            const targetRow = e.target.closest('tr');
+            if (!targetRow) return;
+
+            // Determine the index of the clicked item within the current *filtered* view
+            const clickedItem = filteredData[targetRow.rowIndex - 1]; 
+            const originalIndex = data.findIndex(d => d === clickedItem);
+
+            if (originalIndex === -1) return; 
+            
+            if (e.target.classList.contains('update-btn')) {
+                openModal('update', originalIndex);
+            } else if (e.target.classList.contains('delete-btn') || e.target.closest('.delete-btn')) {
+                // Custom delete confirmation modal
+                const confirmMessage = document.createElement('div');
+                confirmMessage.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[1001]';
+                confirmMessage.innerHTML = `
+                    <div class="bg-white p-8 rounded-xl shadow-2xl max-w-sm text-center">
+                        <h3 class="text-xl font-bold mb-4">Confirm Deletion</h3>
+                        <p class="mb-6">Are you sure you want to delete the record for: <strong>${data[originalIndex].sourceName}</strong>?</p>
+                        <div class="flex justify-center gap-4">
+                            <button id="confirmDelete" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg transition duration-150">Delete</button>
+                            <button id="cancelDelete" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-lg transition duration-150">Cancel</button>
+                        </div>
+                    </div>
+                `;
+                document.body.appendChild(confirmMessage);
+                
+                document.getElementById('confirmDelete').onclick = function() {
+                    data.splice(originalIndex, 1);
+                    applyFilters(); // Re-render table after deletion
+                    confirmMessage.remove();
+                };
+                document.getElementById('cancelDelete').onclick = function() {
+                    confirmMessage.remove();
+                };
+            } else if (e.target.classList.contains('track-btn')) {
+                showHistoryModal(data[originalIndex]);
+            }
+        });
+    });
+</script>
+
 </body>
 </html>
