@@ -459,7 +459,7 @@
         
         // --- CATEGORY STATE ---
         // Categories: The top-level grouping
-        let categories = ['NATCRIM']; // Reduced to NATCRIM as requested
+        let categories = ['NATCRIM', 'SSN', 'Federal CRIM']; // Keeping them here for management features
         // Subcategories: The second-level grouping (OIG, SOR, etc.)
         let subCategories = ['OIG', 'SOR', 'GSA/SAM', 'TW']; 
         let vendors = ['SJV']; 
@@ -521,6 +521,11 @@
             // TW Entries (Mapped to NATCRIM as Category)
             { category: 'NATCRIM', subCategory: 'TW', sourceName: 'FBI Terrorist Screening Center (TSC)', vendor: 'SJV', history: [{ timestamp: initialTimestamp, updateDetails: 'Initial creation.' }] },
             { category: 'NATCRIM', subCategory: 'TW', sourceName: 'OFAC (Treasury) SDN List', vendor: 'SJV', history: [{ timestamp: initialTimestamp, updateDetails: 'Initial creation.' }] },
+            
+            // Add initial entries for SSN and Federal CRIM to show management capability
+            { category: 'SSN', subCategory: 'Verification', sourceName: 'SSA Death Master File', vendor: 'SJV', history: [{ timestamp: initialTimestamp, updateDetails: 'Initial creation.' }] },
+            { category: 'Federal CRIM', subCategory: 'U.S. District Courts', sourceName: 'Federal Court Records Database', vendor: 'SJV', history: [{ timestamp: initialTimestamp, updateDetails: 'Initial creation.' }] },
+            
         ];
         // --- END DATA ARRAY ---
 
