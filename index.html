@@ -135,7 +135,7 @@
             top: 0;
             width: 100%;
             height: 100%;
-            /* POPUP BACKGROUND FIX: Changed from rgba(0,0,0,0.6) to rgba(0,0,0,0.8) */
+            /* POPUP BACKGROUND FIX: Opaque dark background */
             background-color: rgba(0,0,0,0.8);
             align-items: center;
             justify-content: center;
@@ -197,6 +197,21 @@
             color: #dc3545;
             font-weight: 500;
         }
+        
+        /* Added for New Management Structure */
+        .manage-category-select {
+            @apply w-full p-2 border border-gray-300 rounded-lg text-sm mb-2;
+        }
+        .manage-category-pane {
+             /* Solid white background for internal panes */
+            background-color: white !important; 
+        }
+        /* Ensure disabled buttons aren't blurred but simply grayed out */
+        .manage-btn-delete:disabled {
+            color: #9ca3af; /* gray-400 */
+            cursor: not-allowed;
+            opacity: 1; /* Ensure it's not blurred */
+        }
     </style>
 </head>
 <body class="p-4 md:p-8">
@@ -217,10 +232,16 @@
         <div class="filter-group">
             <span class="text-sm text-gray-600 self-center font-semibold whitespace-nowrap">Filter:</span>
             
-            <!-- Natcrim Filter (Dropdown) -->
+            <!-- Category Filter (Dropdown) -->
             <select id="filterExampleOf" class="filter-input w-32">
-                <option value="">Natcrim</option>
+                <option value="">Category</option>
                 <!-- Options populated by JS -->
+            </select>
+            
+             <!-- Subcategory Filter (Dropdown) -->
+            <select id="filterSubCategory" class="filter-input w-32">
+                <option value="">Subcategory</option>
+                <!-- Options populated by JS (SOR, OIG, etc.) -->
             </select>
             
             <!-- Vendor Filter (Dropdown) -->
@@ -253,7 +274,8 @@
         <table id="dataTable" class="min-w-full divide-y divide-gray-200">
             <thead>
                 <tr>
-                    <th class="text-left px-3 py-2">Natcrim</th>
+                    <th class="text-left px-3 py-2">Category</th>
+                    <th class="text-left px-3 py-2">Subcategory</th>
                     <th class="text-left px-3 py-2">Source Name</th>
                     <th class="text-left px-3 py-2">Vendor</th>
                     <th class="text-left px-3 py-2">Update</th>
@@ -276,11 +298,20 @@
         
         <form id="dataForm">
             <div class="space-y-4">
-                <!-- Natcrim Dropdown -->
+                <!-- Category Dropdown -->
                 <div>
-                    <label for="exampleOfSelect" class="block text-sm font-medium text-gray-700 mb-1">Natcrim:</label> 
-                    <select id="exampleOfSelect" class="form-input" required title="Indicates the type of registry check (SOR, OIG, or TW)">
-                        <option value="">Select Natcrim</option>
+                    <label for="exampleOfSelect" class="block text-sm font-medium text-gray-700 mb-1">Category:</label> 
+                    <select id="exampleOfSelect" class="form-input" required title="Select the main check category (e.g., NATCRIM, SSN).">
+                        <option value="">Select Category</option>
+                        <!-- Options populated by JS -->
+                    </select>
+                </div>
+                
+                <!-- Subcategory Dropdown -->
+                <div>
+                    <label for="subCategorySelect" class="block text-sm font-medium text-gray-700 mb-1">Subcategory:</label> 
+                    <select id="subCategorySelect" class="form-input" required title="Select the subcategory (e.g., OIG, SOR).">
+                        <option value="">Select Subcategory</option>
                         <!-- Options populated by JS -->
                     </select>
                 </div>
@@ -288,7 +319,7 @@
                 <!-- Source Name Input -->
                 <div>
                     <label for="sourceName" class="block text-sm font-medium text-gray-700 mb-1">Source Name:</label>
-                    <input type="text" id="sourceName" class="form-input" required title="The official name of the exclusion list or registry." placeholder="e.g., California Megan's Law (CA DOJ)">
+                    <input type="text" id="sourceName" class="form-input" required title="The official name of the exclusion list or registry." placeholder="e.g., Health & Human Services Court">
                 </div>
                 
                 <!-- Vendor Dropdown -->
@@ -305,26 +336,36 @@
     </div>
 </div>
 
-<!-- Manage Categories Modal -->
+<!-- Manage Categories Modal (UPDATED) -->
 <div id="manageCategoriesModal" class="modal">
-    <div class="modal-content" style="max-width: 600px;">
+    <div class="modal-content" style="max-width: 800px;">
         <button class="close-button absolute top-3 right-5 text-gray-400 hover:text-gray-700 text-3xl font-light leading-none" onclick="closeModal('manageCategoriesModal')">&times;</button>
         <h2 class="text-2xl font-bold text-gray-800 mb-6 text-center">Manage Categories & Vendors</h2>
         
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
             
-            <!-- Manage Natcrim -->
-            <div class="p-4 border rounded-lg">
-                <h3 class="text-xl font-semibold mb-3 border-b pb-2">Natcrim Types</h3>
-                <div id="natcrimList" class="space-y-2 max-h-48 overflow-y-auto mb-4">
-                    <!-- Natcrim items populated by JS -->
+            <!-- Category Management (Top Level) -->
+            <div class="p-4 border rounded-lg manage-category-pane">
+                <h3 class="text-xl font-semibold mb-3 border-b pb-2">Categories</h3>
+                <div id="categoryList" class="space-y-2 max-h-48 overflow-y-auto mb-4">
+                    <!-- Categories populated by JS -->
                 </div>
-                <input type="text" id="newNatcrimInput" class="form-input mb-2" placeholder="New Natcrim name">
-                <button id="addNatcrimBtn" class="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 rounded-lg text-sm">Add New Natcrim</button>
+                <input type="text" id="newCategoryInput" class="form-input mb-2" placeholder="New Category name (e.g., SSN)">
+                <button id="addCategoryBtn" class="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 rounded-lg text-sm">Add New Category</button>
+            </div>
+
+            <!-- Subcategory Management -->
+            <div class="p-4 border rounded-lg manage-category-pane">
+                <h3 class="text-xl font-semibold mb-3 border-b pb-2">Subcategories</h3>
+                <div id="subCategoryList" class="space-y-2 max-h-48 overflow-y-auto mb-4">
+                    <!-- Subcategories populated by JS -->
+                </div>
+                <input type="text" id="newSubCategoryInput" class="form-input mb-2" placeholder="New Subcategory name (e.g., SOR)">
+                <button id="addSubCategoryBtn" class="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 rounded-lg text-sm">Add New Subcategory</button>
             </div>
             
-            <!-- Manage Vendors -->
-            <div class="p-4 border rounded-lg">
+            <!-- Vendor Management -->
+            <div class="p-4 border rounded-lg manage-category-pane">
                 <h3 class="text-xl font-semibold mb-3 border-b pb-2">Vendors</h3>
                 <div id="vendorList" class="space-y-2 max-h-48 overflow-y-auto mb-4">
                     <!-- Vendor items populated by JS -->
@@ -334,7 +375,7 @@
             </div>
         </div>
         
-        <p class="text-sm text-gray-500 mt-4 italic">Use the buttons above to add, rename, or delete categories/vendors.</p>
+        <p class="text-sm text-gray-500 mt-4 italic">Use the sections above to manage your check hierarchy and vendor list.</p>
     </div>
 </div>
 
@@ -417,19 +458,20 @@
         const dataTableBody = document.querySelector('#dataTable tbody');
         
         // --- CATEGORY STATE ---
-        let natcrimCategories = ['GSA/SAM', 'SOR', 'OIG', 'TW'];
-        let vendors = ['SJV', 'Rapidcourt'];
+        // Categories: The top-level grouping
+        let categories = ['NATCRIM']; // Reduced to NATCRIM as requested
+        // Subcategories: The second-level grouping (OIG, SOR, etc.)
+        let subCategories = ['OIG', 'SOR', 'GSA/SAM', 'TW']; 
+        let vendors = ['SJV']; 
         
         // Filter Elements
         const filterExampleOf = document.getElementById('filterExampleOf');
+        const filterSubCategory = document.getElementById('filterSubCategory'); // New Subcategory Filter
         const filterVendor = document.getElementById('filterVendor');
         const filterSourceName = document.getElementById('filterSourceName');
         
         // Action Buttons
-        const searchFilterBtn = document.getElementById('searchFilterBtn');
-        const clearFilterBtn = document.getElementById('clearFilterBtn');
         const manageCategoriesBtn = document.getElementById('manageCategoriesBtn');
-        const addCheckBtn = document.getElementById('addCheckBtn');
 
         // Modals
         const addUpdateModal = document.getElementById('addUpdateModal');
@@ -439,83 +481,46 @@
         const saveBtn = document.getElementById('saveBtn');
         
         // Modal Select Fields
-        const exampleOfSelect = document.getElementById('exampleOfSelect');
+        const categorySelect = document.getElementById('exampleOfSelect'); 
+        const subCategorySelect = document.getElementById('subCategorySelect'); // New Subcategory Dropdown
         const vendorSelect = document.getElementById('vendorSelect');
         const sourceNameInput = document.getElementById('sourceName');
         
         // Manage Categories Fields
-        const natcrimListDiv = document.getElementById('natcrimList');
+        const categoryListDiv = document.getElementById('categoryList');
+        const newCategoryInput = document.getElementById('newCategoryInput');
+        const addCategoryBtn = document.getElementById('addCategoryBtn');
+
+        const subCategoryListDiv = document.getElementById('subCategoryList');
+        const newSubCategoryInput = document.getElementById('newSubCategoryInput');
+        const addSubCategoryBtn = document.getElementById('addSubCategoryBtn');
+
         const vendorListDiv = document.getElementById('vendorList');
-        const newNatcrimInput = document.getElementById('newNatcrimInput');
-        const addNatcrimBtn = document.getElementById('addNatcrimBtn');
         const newVendorInput = document.getElementById('newVendorInput');
         const addVendorBtn = document.getElementById('addVendorBtn');
 
         const initialTimestamp = (new Date()).toLocaleString();
         
-        // --- INITIAL DATA ARRAY ---
+        // --- INITIAL DATA ARRAY (Mapped to NATCRIM as Category) ---
         let data = [
-            // --- OIG Entries ---
-            { exampleOf: 'OIG', sourceName: 'HEALTH & HUMAN SERVICES COURT', vendor: 'SJV', 
-              history: [{ timestamp: initialTimestamp, updateDetails: 'Initial creation.' }] },
-            { exampleOf: 'OIG', sourceName: 'MEDICARE SANCTIONS/EXCLUSION DATABASE COURT', vendor: 'SJV', 
-              history: [{ timestamp: initialTimestamp, updateDetails: 'Initial creation.' }] },
-            { exampleOf: 'OIG', sourceName: 'US_HHS_EXCLUSIONS COURT', vendor: 'SJV', 
-              history: [{ timestamp: initialTimestamp, updateDetails: 'Initial creation.' }] },
-            { exampleOf: 'OIG', sourceName: 'HHS_DATABASE COURT', vendor: 'SJV', 
-              history: [{ timestamp: initialTimestamp, updateDetails: 'Initial creation.' }] },
-            { exampleOf: 'OIG', sourceName: 'US_SAM_EXCLUSIONS COURT', vendor: 'SJV', 
-              history: [{ timestamp: initialTimestamp, updateDetails: 'Initial creation.' }] },
-
-            // --- SOR Entries ---
-            { exampleOf: 'SOR', sourceName: 'SEX OFFENDER REGISTRY COURT', vendor: 'SJV', 
-              history: [{ timestamp: initialTimestamp, updateDetails: 'Initial creation.' }] },
-            { exampleOf: 'SOR', sourceName: 'INDIANA SEX OFFENDER REGISTRY COURT', vendor: 'SJV', 
-              history: [{ timestamp: initialTimestamp, updateDetails: 'Initial creation.' }] },
-            { exampleOf: 'SOR', sourceName: 'TEXAS SEX OFFENDER REGISTRY COURT', vendor: 'SJV', 
-              history: [{ timestamp: initialTimestamp, updateDetails: 'Initial creation.' }] },
-            { exampleOf: 'SOR', sourceName: 'LOUISIANA SEX OFFENDER REGISTRY COURT', vendor: 'SJV', 
-              history: [{ timestamp: initialTimestamp, updateDetails: 'Initial creation.' }] },
-            { exampleOf: 'SOR', sourceName: 'ARIZONA SEX OFFENDER REGISTRY COURT', vendor: 'SJV', 
-              history: [{ timestamp: initialTimestamp, updateDetails: 'Initial creation.' }] },
+            // OIG Entries (Mapped to NATCRIM as Category)
+            { category: 'NATCRIM', subCategory: 'OIG', sourceName: 'HEALTH & HUMAN SERVICES COURT', vendor: 'SJV', history: [{ timestamp: initialTimestamp, updateDetails: 'Initial creation.' }] },
+            { category: 'NATCRIM', subCategory: 'OIG', sourceName: 'MEDICARE SANCTIONS/EXCLUSION DATABASE COURT', vendor: 'SJV', history: [{ timestamp: initialTimestamp, updateDetails: 'Initial creation.' }] },
+            { category: 'NATCRIM', subCategory: 'OIG', sourceName: 'US_HHS_EXCLUSIONS COURT', vendor: 'SJV', history: [{ timestamp: initialTimestamp, updateDetails: 'Initial creation.' }] },
             
-            // --- GSA/SAM Entries ---
-            { exampleOf: 'GSA/SAM', sourceName: 'ARREST/US/NATIONAL/RECENTLY_BOOKED COURT', vendor: 'SJV', 
-              history: [{ timestamp: initialTimestamp, updateDetails: 'New Source Name added.' }] },
-            { exampleOf: 'GSA/SAM', sourceName: 'Federal Agency Debarments (General Services Administration)', vendor: 'SJV', 
-              history: [{ timestamp: initialTimestamp, updateDetails: 'Initial creation.' }] },
-            { exampleOf: 'GSA/SAM', sourceName: 'System for Award Management (SAM) Exclusion List', vendor: 'SJV', 
-              history: [{ timestamp: initialTimestamp, updateDetails: 'Initial creation.' }] },
-            { exampleOf: 'GSA/SAM', sourceName: 'Environmental Protection Agency (EPA) Debarments', vendor: 'SJV', 
-              history: [{ timestamp: initialTimestamp, updateDetails: 'Initial creation.' }] },
-            { exampleOf: 'GSA/SAM', sourceName: 'Department of Housing and Urban Development (HUD) Exclusions', vendor: 'SJV', 
-              history: [{ timestamp: initialTimestamp, updateDetails: 'Initial creation.' }] },
-            { exampleOf: 'GSA/SAM', sourceName: 'Department of Defense (DOD) Suspension & Debarment', vendor: 'SJV', 
-              history: [{ timestamp: initialTimestamp, updateDetails: 'Initial creation.' }] },
-            { exampleOf: 'GSA/SAM', sourceName: 'Department of Energy (DOE) Exclusion Records', vendor: 'SJV', 
-              history: [{ timestamp: initialTimestamp, updateDetails: 'Initial creation.' }] },
-            { exampleOf: 'GSA/SAM', sourceName: 'Department of Veterans Affairs (VA) Exclusions', vendor: 'SJV', 
-              history: [{ timestamp: initialTimestamp, updateDetails: 'Initial creation.' }] },
-            { exampleOf: 'GSA/SAM', sourceName: 'U.S. Department of Agriculture (USDA) Debarment', vendor: 'SJV', 
-              history: [{ timestamp: initialTimestamp, updateDetails: 'Initial creation.' }] },
-            { exampleOf: 'GSA/SAM', sourceName: 'Department of Transportation (DOT) Debarment Records', vendor: 'SJV', 
-              history: [{ timestamp: initialTimestamp, updateDetails: 'Initial creation.' }] },
+            // SOR Entries (Mapped to NATCRIM as Category)
+            { category: 'NATCRIM', subCategory: 'SOR', sourceName: 'SEX OFFENDER REGISTRY COURT', vendor: 'SJV', history: [{ timestamp: initialTimestamp, updateDetails: 'Initial creation.' }] },
+            { category: 'NATCRIM', subCategory: 'SOR', sourceName: 'INDIANA SEX OFFENDER REGISTRY COURT', vendor: 'SJV', history: [{ timestamp: initialTimestamp, updateDetails: 'Initial creation.' }] },
+            { category: 'NATCRIM', subCategory: 'SOR', sourceName: 'TEXAS SEX OFFENDER REGISTRY COURT', vendor: 'SJV', history: [{ timestamp: initialTimestamp, updateDetails: 'Initial creation.' }] },
             
-            // --- TW (Terrorist Watchlist) Entries ---
-            { exampleOf: 'TW', sourceName: 'FBI Terrorist Screening Center (TSC) / TSDB overview', vendor: 'SJV', 
-              history: [{ timestamp: initialTimestamp, updateDetails: 'Initial creation.' }] },
-            { exampleOf: 'TW', sourceName: 'FBI Terrorist Watchlisting Transparency document', vendor: 'SJV', 
-              history: [{ timestamp: initialTimestamp, updateDetails: 'Initial creation.' }] },
-            { exampleOf: 'TW', sourceName: 'U.S. Dept. of State Foreign Terrorist Organizations (FTO) list', vendor: 'SJV', 
-              history: [{ timestamp: initialTimestamp, updateDetails: 'Initial creation.' }] },
-            { exampleOf: 'TW', sourceName: 'OFAC (Treasury) Specially Designated Nationals (SDN) List', vendor: 'SJV', 
-              history: [{ timestamp: initialTimestamp, updateDetails: 'Initial creation.' }] },
-            { exampleOf: 'TW', sourceName: 'TSA / No Fly List & Traveler Redress', vendor: 'SJV', 
-              history: [{ timestamp: initialTimestamp, updateDetails: 'Initial creation.' }] },
-            { exampleOf: 'TW', sourceName: 'GAO Oversight Reports on Terrorist Watchlists', vendor: 'SJV', 
-              history: [{ timestamp: initialTimestamp, updateDetails: 'Initial creation.' }] },
-            { exampleOf: 'TW', sourceName: 'Executive Orders / State Dept sanctions (EO 13224 etc.)', vendor: 'SJV', 
-              history: [{ timestamp: initialTimestamp, updateDetails: 'Initial creation.' }] },
+            // GSA/SAM Entries (Mapped to NATCRIM as Category)
+            { category: 'NATCRIM', subCategory: 'GSA/SAM', sourceName: 'ARREST/US/NATIONAL/RECENTLY_BOOKED COURT', vendor: 'SJV', history: [{ timestamp: initialTimestamp, updateDetails: 'Initial creation.' }] },
+            { category: 'NATCRIM', subCategory: 'GSA/SAM', sourceName: 'Federal Agency Debarments (GSA)', vendor: 'SJV', history: [{ timestamp: initialTimestamp, updateDetails: 'Initial creation.' }] },
+            { category: 'NATCRIM', subCategory: 'GSA/SAM', sourceName: 'System for Award Management (SAM) Exclusion List', vendor: 'SJV', history: [{ timestamp: initialTimestamp, updateDetails: 'Initial creation.' }] },
+            
+            // TW Entries (Mapped to NATCRIM as Category)
+            { category: 'NATCRIM', subCategory: 'TW', sourceName: 'FBI Terrorist Screening Center (TSC)', vendor: 'SJV', history: [{ timestamp: initialTimestamp, updateDetails: 'Initial creation.' }] },
+            { category: 'NATCRIM', subCategory: 'TW', sourceName: 'OFAC (Treasury) SDN List', vendor: 'SJV', history: [{ timestamp: initialTimestamp, updateDetails: 'Initial creation.' }] },
         ];
         // --- END DATA ARRAY ---
 
@@ -523,21 +528,42 @@
         let updatingIndex = -1;
 
         // --- CORE UI/DATA FUNCTIONS ---
-
+        
         // Function to refresh dropdown options
         const refreshDropdowns = () => {
-            // Natcrim Dropdowns
-            [filterExampleOf, exampleOfSelect].forEach(select => {
+            // Category Dropdowns (Filter and Add/Update Modal)
+            [filterExampleOf, categorySelect].forEach(select => {
                 let currentValue = select.value;
-                select.innerHTML = select === filterExampleOf ? '<option value="">Natcrim</option>' : '<option value="">Select Natcrim</option>';
-                natcrimCategories.sort().forEach(cat => {
+                const defaultText = select === filterExampleOf ? 'Category' : 'Select Category';
+                select.innerHTML = `<option value="">${defaultText}</option>`;
+                
+                // Only show current active categories (NATCRIM) in main filters/dropdowns
+                const filteredCategories = categories.filter(c => c === 'NATCRIM');
+                
+                filteredCategories.sort().forEach(cat => {
                     const option = document.createElement('option');
                     option.value = cat;
                     option.textContent = cat;
                     select.appendChild(option);
                 });
+                select.value = currentValue || 'NATCRIM'; // Default to NATCRIM
+            });
+            
+            // Subcategory Dropdowns (Filter and Add/Update Modal)
+            [filterSubCategory, subCategorySelect].forEach(select => {
+                let currentValue = select.value;
+                const defaultText = select === filterSubCategory ? 'Subcategory' : 'Select Subcategory';
+                select.innerHTML = `<option value="">${defaultText}</option>`;
+                
+                subCategories.sort().forEach(sub => {
+                    const option = document.createElement('option');
+                    option.value = sub;
+                    option.textContent = sub;
+                    select.appendChild(option);
+                });
                 select.value = currentValue;
             });
+
 
             // Vendor Dropdowns
             [filterVendor, vendorSelect].forEach(select => {
@@ -557,7 +583,7 @@
         const renderTable = (dataToRender) => {
             dataTableBody.innerHTML = '';
             if (dataToRender.length === 0) {
-                dataTableBody.innerHTML = '<tr><td colspan="5" class="p-4 text-center text-gray-500">No results found matching your filter.</td></tr>';
+                dataTableBody.innerHTML = '<tr><td colspan="6" class="p-4 text-center text-gray-500">No results found matching your filter.</td></tr>';
                 return;
             }
             dataToRender.forEach((item, index) => {
@@ -567,7 +593,8 @@
                 const permanentIndex = data.findIndex(d => d === item);
 
                 row.innerHTML = `
-                    <td class="px-6 py-4 whitespace-nowrap">${item.exampleOf}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">${item.category}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">${item.subCategory}</td>
                     <td class="px-6 py-4">${item.sourceName}</td>
                     <td class="px-6 py-4 whitespace-nowrap">${item.vendor}</td>
                     <td class="px-6 py-4 whitespace-nowrap">
@@ -581,18 +608,20 @@
             });
         };
 
-        // Function to filter the data based on all three criteria
+        // Function to filter the data based on all criteria
         const applyFilters = () => {
-            const selectedExampleOf = filterExampleOf.value;
+            const selectedCategory = filterExampleOf.value;
+            const selectedSubCategory = filterSubCategory.value;
             const selectedVendor = filterVendor.value;
             const searchTermSourceName = filterSourceName.value.trim().toLowerCase();
 
             const filteredData = data.filter(item => {
-                const matchesExampleOf = !selectedExampleOf || item.exampleOf === selectedExampleOf;
+                const matchesCategory = !selectedCategory || item.category === selectedCategory;
+                const matchesSubCategory = !selectedSubCategory || item.subCategory === selectedSubCategory;
                 const matchesVendor = !selectedVendor || item.vendor === selectedVendor;
                 const matchesSourceName = !searchTermSourceName || item.sourceName.toLowerCase().includes(searchTermSourceName);
 
-                return matchesExampleOf && matchesVendor && matchesSourceName;
+                return matchesCategory && matchesSubCategory && matchesVendor && matchesSourceName;
             });
 
             renderTable(filteredData);
@@ -601,16 +630,20 @@
         // --- MANAGE CATEGORIES LOGIC ---
         
         const isCategoryUsed = (type, value) => {
-            if (type === 'natcrim') {
-                return data.some(item => item.exampleOf === value);
+            if (type === 'category') {
+                return data.some(item => item.category === value);
             } else if (type === 'vendor') {
                 return data.some(item => item.vendor === value);
+            } else if (type === 'subCategory') {
+                 // Check if the subCategory is used as a subCategory
+                return data.some(item => item.subCategory === value);
             }
             return false;
         };
-
+        
+        // Renders Category, Subcategory, and Vendor lists for the management modal
         const renderManagementLists = () => {
-            const createListItem = (type, value, list) => {
+            const createListItem = (type, value, list, parentCategory = null) => {
                 const isUsed = isCategoryUsed(type, value);
                 const item = document.createElement('div');
                 item.className = 'manage-list-item';
@@ -618,12 +651,12 @@
                 item.innerHTML = `
                     <span class="text-sm font-medium">${value}</span>
                     <div class="manage-actions">
-                        <button class="text-xs manage-btn-update" data-type="${type}" data-value="${value}">Rename</button>
+                        <button class="text-xs manage-btn-update" data-type="${type}" data-value="${value}" data-parent="${parentCategory || ''}">Rename</button>
                         <button class="text-xs manage-btn-delete ${isUsed ? 'opacity-50 cursor-not-allowed' : ''}" 
                                 data-type="${type}" 
                                 data-value="${value}" 
                                 ${isUsed ? 'disabled' : ''}
-                                title="${isUsed ? 'Cannot delete: category is currently in use.' : 'Delete category.'}">
+                                title="${isUsed ? 'Cannot delete: item is currently in use.' : 'Delete item.'}">
                                 Delete
                         </button>
                     </div>
@@ -631,45 +664,56 @@
                 list.appendChild(item);
             };
 
-            // Render Natcrim List
-            natcrimListDiv.innerHTML = '';
-            natcrimCategories.sort().forEach(cat => createListItem('natcrim', cat, natcrimListDiv));
+            // Render Category List
+            categoryListDiv.innerHTML = '';
+            categories.sort().forEach(cat => createListItem('category', cat, categoryListDiv));
+            
+            // Render Subcategory List 
+            subCategoryListDiv.innerHTML = '';
+            subCategories.sort().forEach(sub => createListItem('subCategory', sub, subCategoryListDiv));
 
             // Render Vendor List
             vendorListDiv.innerHTML = '';
             vendors.sort().forEach(v => createListItem('vendor', v, vendorListDiv));
         };
         
-        // Rename Handler for Management Modal
+        // Main Renaming Logic
         const handleRename = (type, oldValue) => {
             const newValue = prompt(`Enter new name for ${type} '${oldValue}':`);
             if (newValue && newValue.trim() !== oldValue) {
                 const cleanNewValue = newValue.trim();
                 
-                // Check for duplicates before renaming
-                const list = type === 'natcrim' ? natcrimCategories : vendors;
+                const list = type === 'category' ? categories : (type === 'vendor' ? vendors : subCategories);
+                
                 if (list.includes(cleanNewValue)) {
                     alert(`Error: A ${type} named '${cleanNewValue}' already exists.`);
                     return;
                 }
 
-                if (type === 'natcrim') {
-                    // Update Natcrim category list
-                    const index = natcrimCategories.indexOf(oldValue);
-                    if (index !== -1) natcrimCategories[index] = cleanNewValue;
+                if (type === 'category') {
+                    // Update Category list and all corresponding data entries
+                    const index = categories.indexOf(oldValue);
+                    if (index !== -1) categories[index] = cleanNewValue;
+                    data.forEach(item => { if (item.category === oldValue) item.category = cleanNewValue; });
                     
-                    // Update main data array
-                    data.forEach(item => {
-                        if (item.exampleOf === oldValue) item.exampleOf = cleanNewValue;
-                    });
                 } else if (type === 'vendor') {
-                    // Update Vendor list
+                    // Update Vendor list and all corresponding data entries
                     const index = vendors.indexOf(oldValue);
                     if (index !== -1) vendors[index] = cleanNewValue;
+                    data.forEach(item => { if (item.vendor === oldValue) item.vendor = cleanNewValue; });
                     
-                    // Update main data array
-                    data.forEach(item => {
-                        if (item.vendor === oldValue) item.vendor = cleanNewValue;
+                } else if (type === 'subCategory') {
+                    // Update Subcategory list and all corresponding data entries
+                    const index = subCategories.indexOf(oldValue);
+                    if (index !== -1) subCategories[index] = cleanNewValue;
+                    data.forEach(item => { 
+                        if (item.subCategory === oldValue) {
+                            item.subCategory = cleanNewValue;
+                            // Update source name if it exactly matches the old subcategory name
+                            if (item.sourceName === oldValue) {
+                                item.sourceName = cleanNewValue;
+                            }
+                        }
                     });
                 }
 
@@ -681,7 +725,7 @@
             }
         };
         
-        // Delete Handler for Management Modal
+        // Main Deletion Logic
         const handleDelete = (type, value) => {
             if (isCategoryUsed(type, value)) {
                 alert(`Cannot delete ${type} '${value}': It is currently associated with one or more checks in the main table.`);
@@ -689,10 +733,15 @@
             }
             
             if (confirm(`Are you sure you want to delete the ${type} '${value}'? This cannot be undone.`)) {
-                if (type === 'natcrim') {
-                    natcrimCategories = natcrimCategories.filter(cat => cat !== value);
+                if (type === 'category') {
+                    categories = categories.filter(cat => cat !== value);
                 } else if (type === 'vendor') {
                     vendors = vendors.filter(v => v !== value);
+                } else if (type === 'subCategory') {
+                    // Remove from subCategory state array
+                    subCategories = subCategories.filter(sub => sub !== value);
+                    // Filter the main data array to remove all entries using this specific subcategory
+                    data = data.filter(item => item.subCategory !== value);
                 }
                 
                 refreshDropdowns();
@@ -716,19 +765,37 @@
             }
         });
         
-        // Event Listener for Add Natcrim button
-        addNatcrimBtn.addEventListener('click', () => {
-            const newCat = newNatcrimInput.value.trim();
+        // Event Listener for Add Category button
+        addCategoryBtn.addEventListener('click', () => {
+            const newCat = newCategoryInput.value.trim();
             if (!newCat) return;
-            if (!natcrimCategories.includes(newCat)) {
-                natcrimCategories.push(newCat);
-                newNatcrimInput.value = '';
+            if (!categories.includes(newCat)) {
+                categories.push(newCat);
+                newCategoryInput.value = '';
                 refreshDropdowns();
                 renderManagementLists();
-                alert(`New Natcrim type '${newCat}' added!`);
+                alert(`New Category '${newCat}' added!`);
             } else {
-                alert(`Natcrim type '${newCat}' already exists.`);
+                alert(`Category '${newCat}' already exists.`);
             }
+        });
+        
+        // Event Listener for Add Subcategory button
+        addSubCategoryBtn.addEventListener('click', () => {
+            const newSub = newSubCategoryInput.value.trim();
+            if (!newSub) return;
+
+            if (subCategories.includes(newSub)) {
+                 alert(`Subcategory '${newSub}' already exists.`);
+                 return;
+            }
+            
+            subCategories.push(newSub);
+            newSubCategoryInput.value = '';
+            
+            refreshDropdowns();
+            renderManagementLists();
+            alert(`New Subcategory '${newSub}' added!`);
         });
 
         // Event Listener for Add Vendor button
@@ -758,15 +825,16 @@
             manageCategoriesModal.style.display = 'flex';
         });
         
-        addCheckBtn.addEventListener('click', () => {
+        document.getElementById('addCheckBtn').addEventListener('click', () => {
             openModal('add');
         });
 
         // --- BUTTON HANDLERS ---
-        searchFilterBtn.addEventListener('click', applyFilters);
+        document.getElementById('searchFilterBtn').addEventListener('click', applyFilters);
 
-        clearFilterBtn.addEventListener('click', () => {
+        document.getElementById('clearFilterBtn').addEventListener('click', () => {
             filterExampleOf.value = '';
+            filterSubCategory.value = '';
             filterVendor.value = '';
             filterSourceName.value = '';
             applyFilters();
@@ -792,12 +860,14 @@
 
             if (isUpdating) {
                 const item = data[index];
-                exampleOfSelect.value = item.exampleOf;
+                categorySelect.value = item.category;
+                subCategorySelect.value = item.subCategory;
                 sourceNameInput.value = item.sourceName;
                 vendorSelect.value = item.vendor;
             } else {
                 dataForm.reset();
-                // SET VENDOR DEFAULT TO SJV
+                // SET DEFAULT VALUES
+                categorySelect.value = 'NATCRIM';
                 vendorSelect.value = 'SJV'; 
             }
             addUpdateModal.style.display = 'flex';
@@ -807,17 +877,30 @@
         dataForm.addEventListener('submit', (e) => {
             e.preventDefault();
             
-            const newExampleOf = exampleOfSelect.value;
+            const newCategory = categorySelect.value;
+            const newSubCategory = subCategorySelect.value;
             const newSourceName = sourceNameInput.value.trim();
             const newVendor = vendorSelect.value;
             const now = (new Date()).toLocaleString();
+            
+            if (!newCategory || !newSubCategory || !newSourceName || !newVendor) {
+                alert("Please fill out all required fields.");
+                return;
+            }
+
+            // Subcategory name is used as the subCategory field.
+            const newSubCategoryValue = newSubCategory;
+
 
             if (isUpdating) {
                 const originalItem = data[updatingIndex];
                 let updateDetails = [];
 
-                if (originalItem.exampleOf !== newExampleOf) {
-                    updateDetails.push(`Natcrim changed from '${originalItem.exampleOf}' to '${newExampleOf}'`);
+                if (originalItem.category !== newCategory) {
+                    updateDetails.push(`Category changed from '${originalItem.category}' to '${newCategory}'`);
+                }
+                 if (originalItem.subCategory !== newSubCategoryValue) {
+                    updateDetails.push(`Subcategory changed from '${originalItem.subCategory}' to '${newSubCategoryValue}'`);
                 }
                 if (originalItem.sourceName !== newSourceName) {
                     updateDetails.push(`Source Name changed from '${originalItem.sourceName}' to '${newSourceName}'`);
@@ -838,13 +921,15 @@
                     });
                 }
                 
-                originalItem.exampleOf = newExampleOf;
+                originalItem.category = newCategory;
+                originalItem.subCategory = newSubCategoryValue; 
                 originalItem.sourceName = newSourceName;
                 originalItem.vendor = newVendor;
 
             } else {
                 data.push({ 
-                    exampleOf: newExampleOf, 
+                    category: newCategory, 
+                    subCategory: newSubCategoryValue,
                     sourceName: newSourceName, 
                     vendor: newVendor,
                     history: [{ timestamp: now, updateDetails: 'New record created.' }]
