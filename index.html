@@ -559,7 +559,11 @@
             { category: 'NATCRIM', subCategory: 'TW', sourceName: 'TSA No Fly List & Traveler Redress', vendor: 'SJV', history: [{ timestamp: initialTimestamp, updateDetails: 'Initial creation.' }] },
             { category: 'NATCRIM', subCategory: 'TW', sourceName: 'Executive Orders / State Dept sanctions (EO 13224)', vendor: 'SJV', history: [{ timestamp: initialTimestamp, updateDetails: 'Initial creation.' }] },
             
-        ]; // Total entries: 16
+            // Placeholder data for other categories (used to test management features)
+            { category: 'SSN', subCategory: 'Verification', sourceName: 'SSA Death Master File', vendor: 'SJV', history: [{ timestamp: initialTimestamp, updateDetails: 'Initial creation.' }] },
+            { category: 'Federal CRIM', subCategory: 'U.S. District Courts', sourceName: 'Federal Court Records Database', vendor: 'SJV', history: [{ timestamp: initialTimestamp, updateDetails: 'Initial creation.' }] },
+            
+        ]; // Total entries: 18
         // --- END DATA ARRAY ---
 
         let isUpdating = false;
@@ -686,10 +690,15 @@
         
         const isCategoryUsed = (type, value) => {
             if (type === 'category') {
+                 // Used if it has assigned subcategories OR if any records use it
+                if (categoryAssignments[value] && categoryAssignments[value].length > 0) return true;
                 return data.some(item => item.category === value);
             } else if (type === 'vendor') {
                 return data.some(item => item.vendor === value);
             } else if (type === 'subCategory') {
+                // Used if it is assigned to any category OR if any records use it
+                const assigned = Object.values(categoryAssignments).flat();
+                if (assigned.includes(value)) return true;
                 return data.some(item => item.subCategory === value);
             }
             return false;
@@ -709,7 +718,7 @@
                                 data-type="${type}" 
                                 data-value="${value}" 
                                 ${isUsed ? 'disabled' : ''}
-                                title="${isUsed ? 'Cannot delete: item is currently in use.' : 'Delete item.'}">
+                                title="${isUsed ? 'Cannot delete: item is currently in use (assigned or data records exist).' : 'Delete item.'}">
                                 Delete
                         </button>
                     </div>
@@ -798,8 +807,11 @@
                     const index = categories.indexOf(oldValue);
                     if (index !== -1) categories[index] = cleanNewValue;
                     
-                    categoryAssignments[cleanNewValue] = categoryAssignments[oldValue];
-                    delete categoryAssignments[oldValue];
+                    // Update assignments keys
+                    if (categoryAssignments[oldValue]) {
+                        categoryAssignments[cleanNewValue] = categoryAssignments[oldValue];
+                        delete categoryAssignments[oldValue];
+                    }
 
                     data.forEach(item => { if (item.category === oldValue) item.category = cleanNewValue; });
                     
