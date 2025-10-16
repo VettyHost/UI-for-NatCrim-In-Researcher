@@ -375,6 +375,26 @@
             </div>
         </div>
         
+        <!-- Assignment Panel (Moved outside grid for dedicated space) -->
+        <div class="mt-6 p-4 border rounded-lg manage-category-pane">
+            <h3 class="text-xl font-semibold mb-3 border-b pb-2">Assign Subcategories to Category</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                 <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Select Category to Assign:</label> 
+                    <select id="manageCategorySelect" class="manage-category-select">
+                        <option value="">Select Category</option>
+                        <!-- Options populated by JS -->
+                    </select>
+                </div>
+                <div id="assignSubcategoryContainer">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Assigned Subcategories:</label>
+                    <div id="assignSubcategoryListDiv" class="space-y-1 max-h-40 overflow-y-auto border p-2 rounded-lg bg-gray-50">
+                        <!-- Checkboxes populated by JS -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <p class="text-sm text-gray-500 mt-4 italic">Use the sections above to manage your check hierarchy and vendor list.</p>
     </div>
 </div>
@@ -459,11 +479,19 @@
         
         // --- CATEGORY STATE ---
         // Categories: The top-level grouping
-        let categories = ['NATCRIM', 'SSN', 'Federal CRIM']; // Keeping them here for management features
+        let categories = ['NATCRIM', 'SSN', 'Federal CRIM']; // All manageable categories
         // Subcategories: The second-level grouping (OIG, SOR, etc.)
-        let subCategories = ['OIG', 'SOR', 'GSA/SAM', 'TW']; 
+        let subCategories = ['OIG', 'SOR', 'GSA/SAM', 'TW', 'Verification', 'U.S. District Courts']; // All potential subs
         let vendors = ['SJV']; 
         
+        // --- CATEGORY ASSIGNMENTS ---
+        // Maps Category to an array of assigned Subcategories
+        let categoryAssignments = {
+            'NATCRIM': ['OIG', 'SOR', 'GSA/SAM', 'TW'],
+            'SSN': ['Verification'],
+            'Federal CRIM': ['U.S. District Courts']
+        };
+
         // Filter Elements
         const filterExampleOf = document.getElementById('filterExampleOf');
         const filterSubCategory = document.getElementById('filterSubCategory'); // New Subcategory Filter
@@ -499,34 +527,39 @@
         const newVendorInput = document.getElementById('newVendorInput');
         const addVendorBtn = document.getElementById('addVendorBtn');
 
+        // New Assignment Fields
+        const assignSubcategoryListDiv = document.getElementById('assignSubcategoryListDiv');
+        const manageCategorySelect = document.getElementById('manageCategorySelect');
+        
         const initialTimestamp = (new Date()).toLocaleString();
         
-        // --- INITIAL DATA ARRAY (Mapped to NATCRIM as Category) ---
+        // --- INITIAL DATA ARRAY (NEW, CLEANED LIST) ---
         let data = [
-            // OIG Entries (Mapped to NATCRIM as Category)
+            // OIG Entries (5 Total)
             { category: 'NATCRIM', subCategory: 'OIG', sourceName: 'HEALTH & HUMAN SERVICES COURT', vendor: 'SJV', history: [{ timestamp: initialTimestamp, updateDetails: 'Initial creation.' }] },
             { category: 'NATCRIM', subCategory: 'OIG', sourceName: 'MEDICARE SANCTIONS/EXCLUSION DATABASE COURT', vendor: 'SJV', history: [{ timestamp: initialTimestamp, updateDetails: 'Initial creation.' }] },
             { category: 'NATCRIM', subCategory: 'OIG', sourceName: 'US_HHS_EXCLUSIONS COURT', vendor: 'SJV', history: [{ timestamp: initialTimestamp, updateDetails: 'Initial creation.' }] },
-            
-            // SOR Entries (Mapped to NATCRIM as Category)
+            { category: 'NATCRIM', subCategory: 'OIG', sourceName: 'HHS DATABASE COURT', vendor: 'SJV', history: [{ timestamp: initialTimestamp, updateDetails: 'Initial creation.' }] },
+            { category: 'NATCRIM', subCategory: 'OIG', sourceName: 'US_SAM_EXCLUSIONS COURT', vendor: 'SJV', history: [{ timestamp: initialTimestamp, updateDetails: 'Initial creation.' }] },
+
+            // SOR Entries (5 Total)
             { category: 'NATCRIM', subCategory: 'SOR', sourceName: 'SEX OFFENDER REGISTRY COURT', vendor: 'SJV', history: [{ timestamp: initialTimestamp, updateDetails: 'Initial creation.' }] },
             { category: 'NATCRIM', subCategory: 'SOR', sourceName: 'INDIANA SEX OFFENDER REGISTRY COURT', vendor: 'SJV', history: [{ timestamp: initialTimestamp, updateDetails: 'Initial creation.' }] },
             { category: 'NATCRIM', subCategory: 'SOR', sourceName: 'TEXAS SEX OFFENDER REGISTRY COURT', vendor: 'SJV', history: [{ timestamp: initialTimestamp, updateDetails: 'Initial creation.' }] },
+            { category: 'NATCRIM', subCategory: 'SOR', sourceName: 'LOUISIANA SEX OFFENDER REGISTRY COURT', vendor: 'SJV', history: [{ timestamp: initialTimestamp, updateDetails: 'Initial creation.' }] },
+            { category: 'NATCRIM', subCategory: 'SOR', sourceName: 'ARIZONA SEX OFFENDER REGISTRY COURT', vendor: 'SJV', history: [{ timestamp: initialTimestamp, updateDetails: 'Initial creation.' }] },
             
-            // GSA/SAM Entries (Mapped to NATCRIM as Category)
+            // ARREST (Mapped under GSA/SAM for structure, 1 Total)
             { category: 'NATCRIM', subCategory: 'GSA/SAM', sourceName: 'ARREST/US/NATIONAL/RECENTLY_BOOKED COURT', vendor: 'SJV', history: [{ timestamp: initialTimestamp, updateDetails: 'Initial creation.' }] },
-            { category: 'NATCRIM', subCategory: 'GSA/SAM', sourceName: 'Federal Agency Debarments (GSA)', vendor: 'SJV', history: [{ timestamp: initialTimestamp, updateDetails: 'Initial creation.' }] },
-            { category: 'NATCRIM', subCategory: 'GSA/SAM', sourceName: 'System for Award Management (SAM) Exclusion List', vendor: 'SJV', history: [{ timestamp: initialTimestamp, updateDetails: 'Initial creation.' }] },
             
-            // TW Entries (Mapped to NATCRIM as Category)
+            // TW Entries (5 Total)
             { category: 'NATCRIM', subCategory: 'TW', sourceName: 'FBI Terrorist Screening Center (TSC)', vendor: 'SJV', history: [{ timestamp: initialTimestamp, updateDetails: 'Initial creation.' }] },
             { category: 'NATCRIM', subCategory: 'TW', sourceName: 'OFAC (Treasury) SDN List', vendor: 'SJV', history: [{ timestamp: initialTimestamp, updateDetails: 'Initial creation.' }] },
+            { category: 'NATCRIM', subCategory: 'TW', sourceName: 'U.S. Dept. of State Foreign Terrorist Organizations (FTO) list', vendor: 'SJV', history: [{ timestamp: initialTimestamp, updateDetails: 'Initial creation.' }] },
+            { category: 'NATCRIM', subCategory: 'TW', sourceName: 'TSA No Fly List & Traveler Redress', vendor: 'SJV', history: [{ timestamp: initialTimestamp, updateDetails: 'Initial creation.' }] },
+            { category: 'NATCRIM', subCategory: 'TW', sourceName: 'Executive Orders / State Dept sanctions (EO 13224)', vendor: 'SJV', history: [{ timestamp: initialTimestamp, updateDetails: 'Initial creation.' }] },
             
-            // Add initial entries for SSN and Federal CRIM to show management capability
-            { category: 'SSN', subCategory: 'Verification', sourceName: 'SSA Death Master File', vendor: 'SJV', history: [{ timestamp: initialTimestamp, updateDetails: 'Initial creation.' }] },
-            { category: 'Federal CRIM', subCategory: 'U.S. District Courts', sourceName: 'Federal Court Records Database', vendor: 'SJV', history: [{ timestamp: initialTimestamp, updateDetails: 'Initial creation.' }] },
-            
-        ];
+        ]; // Total entries: 16
         // --- END DATA ARRAY ---
 
         let isUpdating = false;
@@ -534,6 +567,25 @@
 
         // --- CORE UI/DATA FUNCTIONS ---
         
+        // Filters options for the Subcategory dropdown based on the selected Category
+        const filterSubcategoryOptions = (parentCategory) => {
+            const assignedSubs = categoryAssignments[parentCategory] || [];
+            
+            // Re-render the subCategorySelect dropdown
+            let currentValue = subCategorySelect.value;
+            subCategorySelect.innerHTML = `<option value="">Select Subcategory</option>`;
+            
+            if (parentCategory) {
+                assignedSubs.sort().forEach(sub => {
+                    const option = document.createElement('option');
+                    option.value = sub;
+                    option.textContent = sub;
+                    subCategorySelect.appendChild(option);
+                });
+            }
+            subCategorySelect.value = assignedSubs.includes(currentValue) ? currentValue : '';
+        };
+
         // Function to refresh dropdown options
         const refreshDropdowns = () => {
             // Category Dropdowns (Filter and Add/Update Modal)
@@ -542,7 +594,7 @@
                 const defaultText = select === filterExampleOf ? 'Category' : 'Select Category';
                 select.innerHTML = `<option value="">${defaultText}</option>`;
                 
-                // Only show current active categories (NATCRIM) in main filters/dropdowns
+                // Filter only for NATCRIM in main filter/dropdowns
                 const filteredCategories = categories.filter(c => c === 'NATCRIM');
                 
                 filteredCategories.sort().forEach(cat => {
@@ -554,20 +606,16 @@
                 select.value = currentValue || 'NATCRIM'; // Default to NATCRIM
             });
             
-            // Subcategory Dropdowns (Filter and Add/Update Modal)
-            [filterSubCategory, subCategorySelect].forEach(select => {
-                let currentValue = select.value;
-                const defaultText = select === filterSubCategory ? 'Subcategory' : 'Select Subcategory';
-                select.innerHTML = `<option value="">${defaultText}</option>`;
-                
-                subCategories.sort().forEach(sub => {
-                    const option = document.createElement('option');
-                    option.value = sub;
-                    option.textContent = sub;
-                    select.appendChild(option);
-                });
-                select.value = currentValue;
+            // Subcategory Filter Dropdown (All subcategories)
+            let filterSubCurrentValue = filterSubCategory.value;
+            filterSubCategory.innerHTML = `<option value="">Subcategory</option>`;
+            subCategories.sort().forEach(sub => {
+                const option = document.createElement('option');
+                option.value = sub;
+                option.textContent = sub;
+                filterSubCategory.appendChild(option);
             });
+            filterSubCategory.value = filterSubCurrentValue;
 
 
             // Vendor Dropdowns
@@ -582,6 +630,9 @@
                 });
                 select.value = currentValue;
             });
+            
+            // Initial filter of Subcategories in Add/Update Modal
+            filterSubcategoryOptions(categorySelect.value);
         };
 
         // Function to render the table
@@ -594,7 +645,6 @@
             dataToRender.forEach((item, index) => {
                 const row = document.createElement('tr');
                 row.className = 'hover:bg-gray-50 transition duration-100';
-                // Store the permanent index in the button's data attribute
                 const permanentIndex = data.findIndex(d => d === item);
 
                 row.innerHTML = `
@@ -640,15 +690,13 @@
             } else if (type === 'vendor') {
                 return data.some(item => item.vendor === value);
             } else if (type === 'subCategory') {
-                 // Check if the subCategory is used as a subCategory
                 return data.some(item => item.subCategory === value);
             }
             return false;
         };
-        
-        // Renders Category, Subcategory, and Vendor lists for the management modal
+
         const renderManagementLists = () => {
-            const createListItem = (type, value, list, parentCategory = null) => {
+            const createListItem = (type, value, list) => {
                 const isUsed = isCategoryUsed(type, value);
                 const item = document.createElement('div');
                 item.className = 'manage-list-item';
@@ -656,7 +704,7 @@
                 item.innerHTML = `
                     <span class="text-sm font-medium">${value}</span>
                     <div class="manage-actions">
-                        <button class="text-xs manage-btn-update" data-type="${type}" data-value="${value}" data-parent="${parentCategory || ''}">Rename</button>
+                        <button class="text-xs manage-btn-update" data-type="${type}" data-value="${value}">Rename</button>
                         <button class="text-xs manage-btn-delete ${isUsed ? 'opacity-50 cursor-not-allowed' : ''}" 
                                 data-type="${type}" 
                                 data-value="${value}" 
@@ -680,8 +728,58 @@
             // Render Vendor List
             vendorListDiv.innerHTML = '';
             vendors.sort().forEach(v => createListItem('vendor', v, vendorListDiv));
+            
+            // --- Assignment List (New Panel) ---
+            const renderAssignmentList = (selectedCat) => {
+                assignSubcategoryListDiv.innerHTML = '';
+                if (!selectedCat) {
+                    assignSubcategoryListDiv.innerHTML = '<p class="text-sm text-gray-500 italic p-2">Select a category above to manage assignments.</p>';
+                    return;
+                }
+                
+                const assigned = categoryAssignments[selectedCat] || [];
+                
+                subCategories.sort().forEach(sub => {
+                    const isChecked = assigned.includes(sub);
+                    const div = document.createElement('div');
+                    div.className = 'flex items-center space-x-2 manage-list-item p-2';
+                    div.innerHTML = `
+                        <input type="checkbox" id="assign-${sub}" value="${sub}" ${isChecked ? 'checked' : ''} data-category="${selectedCat}">
+                        <label for="assign-${sub}" class="text-sm">${sub}</label>
+                    `;
+                    assignSubcategoryListDiv.appendChild(div);
+                });
+            };
+            
+            // Initialize/update Category selection in assignment panel
+            manageCategorySelect.innerHTML = `<option value="">Select Category to Assign</option>`;
+            categories.sort().forEach(cat => {
+                const option = document.createElement('option');
+                option.value = cat;
+                option.textContent = cat;
+                manageCategorySelect.appendChild(option);
+            });
+            
+            // Set initial assignment list based on current selection
+            manageCategorySelect.onchange = () => renderAssignmentList(manageCategorySelect.value);
+            renderAssignmentList(manageCategorySelect.value);
         };
+
+        // --- HANDLERS ---
         
+        // Category/Subcategory Modal Change Handler
+        const handleModalCategoryChange = () => {
+            const selectedCategory = categorySelect.value;
+            filterSubcategoryOptions(selectedCategory);
+            subCategorySelect.value = ''; // Clear subcategory when category changes
+            sourceNameInput.value = ''; // Clear source name on category change
+        };
+        categorySelect.addEventListener('change', handleModalCategoryChange);
+        subCategorySelect.addEventListener('change', () => {
+             sourceNameInput.value = ''; // Clear source name on subcategory change
+        });
+        
+
         // Main Renaming Logic
         const handleRename = (type, oldValue) => {
             const newValue = prompt(`Enter new name for ${type} '${oldValue}':`);
@@ -696,9 +794,13 @@
                 }
 
                 if (type === 'category') {
-                    // Update Category list and all corresponding data entries
+                    // Update Category list, assignments, and data entries
                     const index = categories.indexOf(oldValue);
                     if (index !== -1) categories[index] = cleanNewValue;
+                    
+                    categoryAssignments[cleanNewValue] = categoryAssignments[oldValue];
+                    delete categoryAssignments[oldValue];
+
                     data.forEach(item => { if (item.category === oldValue) item.category = cleanNewValue; });
                     
                 } else if (type === 'vendor') {
@@ -708,13 +810,21 @@
                     data.forEach(item => { if (item.vendor === oldValue) item.vendor = cleanNewValue; });
                     
                 } else if (type === 'subCategory') {
-                    // Update Subcategory list and all corresponding data entries
+                    // Update Subcategory list, assignments, and data entries
                     const index = subCategories.indexOf(oldValue);
                     if (index !== -1) subCategories[index] = cleanNewValue;
+                    
+                    // Update assignments
+                    Object.keys(categoryAssignments).forEach(cat => {
+                        const subIndex = categoryAssignments[cat].indexOf(oldValue);
+                        if (subIndex !== -1) {
+                            categoryAssignments[cat][subIndex] = cleanNewValue;
+                        }
+                    });
+
                     data.forEach(item => { 
                         if (item.subCategory === oldValue) {
                             item.subCategory = cleanNewValue;
-                            // Update source name if it exactly matches the old subcategory name
                             if (item.sourceName === oldValue) {
                                 item.sourceName = cleanNewValue;
                             }
@@ -722,7 +832,6 @@
                     });
                 }
 
-                // Re-render all parts of the UI
                 refreshDropdowns();
                 applyFilters();
                 renderManagementLists();
@@ -740,12 +849,18 @@
             if (confirm(`Are you sure you want to delete the ${type} '${value}'? This cannot be undone.`)) {
                 if (type === 'category') {
                     categories = categories.filter(cat => cat !== value);
+                    delete categoryAssignments[value];
                 } else if (type === 'vendor') {
                     vendors = vendors.filter(v => v !== value);
                 } else if (type === 'subCategory') {
-                    // Remove from subCategory state array
                     subCategories = subCategories.filter(sub => sub !== value);
-                    // Filter the main data array to remove all entries using this specific subcategory
+                    
+                    // Remove the subcategory from all assignments
+                    Object.keys(categoryAssignments).forEach(cat => {
+                        categoryAssignments[cat] = categoryAssignments[cat].filter(sub => sub !== value);
+                    });
+                    
+                    // Filter the main data array
                     data = data.filter(item => item.subCategory !== value);
                 }
                 
@@ -755,6 +870,31 @@
                 alert(`${value} deleted successfully.`);
             }
         };
+
+        // Event Listener for Assignment Checkboxes
+        assignSubcategoryListDiv.addEventListener('change', (e) => {
+            if (e.target.type === 'checkbox') {
+                const category = e.target.getAttribute('data-category');
+                const sub = e.target.value;
+                
+                if (!categoryAssignments[category]) {
+                    categoryAssignments[category] = [];
+                }
+
+                if (e.target.checked) {
+                    if (!categoryAssignments[category].includes(sub)) {
+                        categoryAssignments[category].push(sub);
+                    }
+                } else {
+                    categoryAssignments[category] = categoryAssignments[category].filter(s => s !== sub);
+                }
+                // Update the Add/Update modal's subcategory dropdown if the currently selected category is the one being modified
+                if (categorySelect.value === category) {
+                    filterSubcategoryOptions(category);
+                }
+            }
+        });
+
 
         // Event Listener for Rename and Delete buttons in management modal
         manageCategoriesModal.addEventListener('click', (e) => {
@@ -776,6 +916,7 @@
             if (!newCat) return;
             if (!categories.includes(newCat)) {
                 categories.push(newCat);
+                categoryAssignments[newCat] = []; // Initialize empty assignment list
                 newCategoryInput.value = '';
                 refreshDropdowns();
                 renderManagementLists();
@@ -800,7 +941,7 @@
             
             refreshDropdowns();
             renderManagementLists();
-            alert(`New Subcategory '${newSub}' added!`);
+            alert(`New Subcategory '${newSub}' added! Remember to assign it to a Category.`);
         });
 
         // Event Listener for Add Vendor button
@@ -822,7 +963,9 @@
         
         // Initial setup
         refreshDropdowns();
-        renderTable(data);
+        // Set the initial filter value and apply the filter
+        filterExampleOf.value = 'NATCRIM'; 
+        applyFilters(); 
         
         // Open/Close Modals
         manageCategoriesBtn.addEventListener('click', () => {
@@ -838,7 +981,7 @@
         document.getElementById('searchFilterBtn').addEventListener('click', applyFilters);
 
         document.getElementById('clearFilterBtn').addEventListener('click', () => {
-            filterExampleOf.value = '';
+            filterExampleOf.value = 'NATCRIM'; // Resetting to default NATCRIM view
             filterSubCategory.value = '';
             filterVendor.value = '';
             filterSourceName.value = '';
@@ -866,6 +1009,8 @@
             if (isUpdating) {
                 const item = data[index];
                 categorySelect.value = item.category;
+                // Immediately filter subcategories based on the loaded category
+                filterSubcategoryOptions(item.category);
                 subCategorySelect.value = item.subCategory;
                 sourceNameInput.value = item.sourceName;
                 vendorSelect.value = item.vendor;
@@ -873,6 +1018,7 @@
                 dataForm.reset();
                 // SET DEFAULT VALUES
                 categorySelect.value = 'NATCRIM';
+                filterSubcategoryOptions('NATCRIM'); // Filter subs for NATCRIM
                 vendorSelect.value = 'SJV'; 
             }
             addUpdateModal.style.display = 'flex';
@@ -893,7 +1039,6 @@
                 return;
             }
 
-            // Subcategory name is used as the subCategory field.
             const newSubCategoryValue = newSubCategory;
 
 
@@ -976,6 +1121,7 @@
                 document.getElementById('confirmDelete').onclick = function() {
                     data.splice(originalIndex, 1);
                     applyFilters(); // Re-render table after deletion
+                    refreshDropdowns(); // Refresh dropdowns in case a category was deleted
                     confirmMessage.remove();
                 };
                 document.getElementById('cancelDelete').onclick = function() {
