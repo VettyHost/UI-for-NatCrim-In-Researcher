@@ -206,12 +206,7 @@
              /* Solid white background for internal panes */
             background-color: white !important; 
         }
-        /* Ensure disabled buttons aren't blurred but simply grayed out */
-        .manage-btn-delete:disabled {
-            color: #9ca3af; /* gray-400 */
-            cursor: not-allowed;
-            opacity: 1; /* Ensure it's not blurred */
-        }
+        /* Removed .manage-btn-delete:disabled styling */
     </style>
 </head>
 <body class="p-4 md:p-8">
@@ -262,8 +257,6 @@
             <button id="searchFilterBtn" class="search-btn">Search</button>
             <button id="clearFilterBtn" class="clear-btn">Clear Filters</button>
             
-            <!-- New Manage Categories Button -->
-            <button id="manageCategoriesBtn"><i class="fas fa-cog"></i> Manage Categories</button>
             
             <button id="addCheckBtn" class="primary-btn">Add New Check</button>
         </div>
@@ -333,69 +326,6 @@
             </div>
             <button type="submit" id="saveBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg mt-6 transition duration-150 shadow-lg"></button>
         </form>
-    </div>
-</div>
-
-<!-- Manage Categories Modal (UPDATED) -->
-<div id="manageCategoriesModal" class="modal">
-    <div class="modal-content" style="max-width: 800px;">
-        <button class="close-button absolute top-3 right-5 text-gray-400 hover:text-gray-700 text-3xl font-light leading-none" onclick="closeModal('manageCategoriesModal')">&times;</button>
-        <h2 class="text-2xl font-bold text-gray-800 mb-6 text-center">Manage Categories & Vendors</h2>
-        
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            
-            <!-- Category Management (Top Level) -->
-            <div class="p-4 border rounded-lg manage-category-pane">
-                <h3 class="text-xl font-semibold mb-3 border-b pb-2">Categories</h3>
-                <div id="categoryList" class="space-y-2 max-h-48 overflow-y-auto mb-4">
-                    <!-- Categories populated by JS -->
-                </div>
-                <input type="text" id="newCategoryInput" class="form-input mb-2" placeholder="New Category name (e.g., SSN)">
-                <button id="addCategoryBtn" class="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 rounded-lg text-sm">Add New Category</button>
-            </div>
-
-            <!-- Subcategory Management -->
-            <div class="p-4 border rounded-lg manage-category-pane">
-                <h3 class="text-xl font-semibold mb-3 border-b pb-2">Subcategories</h3>
-                <div id="subCategoryList" class="space-y-2 max-h-48 overflow-y-auto mb-4">
-                    <!-- Subcategories populated by JS -->
-                </div>
-                <input type="text" id="newSubCategoryInput" class="form-input mb-2" placeholder="New Subcategory name (e.g., SOR)">
-                <button id="addSubCategoryBtn" class="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 rounded-lg text-sm">Add New Subcategory</button>
-            </div>
-            
-            <!-- Vendor Management -->
-            <div class="p-4 border rounded-lg manage-category-pane">
-                <h3 class="text-xl font-semibold mb-3 border-b pb-2">Vendors</h3>
-                <div id="vendorList" class="space-y-2 max-h-48 overflow-y-auto mb-4">
-                    <!-- Vendor items populated by JS -->
-                </div>
-                <input type="text" id="newVendorInput" class="form-input mb-2" placeholder="New Vendor name">
-                <button id="addVendorBtn" class="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 rounded-lg text-sm">Add New Vendor</button>
-            </div>
-        </div>
-        
-        <!-- Assignment Panel (Moved outside grid for dedicated space) -->
-        <div class="mt-6 p-4 border rounded-lg manage-category-pane">
-            <h3 class="text-xl font-semibold mb-3 border-b pb-2">Assign Subcategories to Category</h3>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Select Category to Assign:</label> 
-                    <select id="manageCategorySelect" class="manage-category-select">
-                        <option value="">Select Category</option>
-                        <!-- Options populated by JS -->
-                    </select>
-                </div>
-                <div id="assignSubcategoryContainer">
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Assigned Subcategories:</label>
-                    <div id="assignSubcategoryListDiv" class="space-y-1 max-h-40 overflow-y-auto border p-2 rounded-lg bg-gray-50">
-                        <!-- Checkboxes populated by JS -->
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <p class="text-sm text-gray-500 mt-4 italic">Use the sections above to manage your check hierarchy and vendor list.</p>
     </div>
 </div>
 
@@ -479,17 +409,15 @@
         
         // --- CATEGORY STATE ---
         // Categories: The top-level grouping
-        let categories = ['NATCRIM', 'SSN', 'Federal CRIM']; // All manageable categories
+        let categories = ['NATCRIM']; // ONLY NATCRIM
         // Subcategories: The second-level grouping (OIG, SOR, etc.)
-        let subCategories = ['OIG', 'SOR', 'GSA/SAM', 'TW', 'Verification', 'U.S. District Courts']; // All potential subs
+        let subCategories = ['OIG', 'SOR', 'GSA/SAM', 'TW']; // Removed Verification and U.S. District Courts
         let vendors = ['SJV']; 
         
         // --- CATEGORY ASSIGNMENTS ---
         // Maps Category to an array of assigned Subcategories
         let categoryAssignments = {
-            'NATCRIM': ['OIG', 'SOR', 'GSA/SAM', 'TW'],
-            'SSN': ['Verification'],
-            'Federal CRIM': ['U.S. District Courts']
+            'NATCRIM': ['OIG', 'SOR', 'GSA/SAM', 'TW']
         };
 
         // Filter Elements
@@ -498,12 +426,8 @@
         const filterVendor = document.getElementById('filterVendor');
         const filterSourceName = document.getElementById('filterSourceName');
         
-        // Action Buttons
-        const manageCategoriesBtn = document.getElementById('manageCategoriesBtn');
-
         // Modals
         const addUpdateModal = document.getElementById('addUpdateModal');
-        const manageCategoriesModal = document.getElementById('manageCategoriesModal');
         const modalTitle = document.getElementById('modalTitle');
         const dataForm = document.getElementById('dataForm');
         const saveBtn = document.getElementById('saveBtn');
@@ -513,23 +437,6 @@
         const subCategorySelect = document.getElementById('subCategorySelect'); // New Subcategory Dropdown
         const vendorSelect = document.getElementById('vendorSelect');
         const sourceNameInput = document.getElementById('sourceName');
-        
-        // Manage Categories Fields
-        const categoryListDiv = document.getElementById('categoryList');
-        const newCategoryInput = document.getElementById('newCategoryInput');
-        const addCategoryBtn = document.getElementById('addCategoryBtn');
-
-        const subCategoryListDiv = document.getElementById('subCategoryList');
-        const newSubCategoryInput = document.getElementById('newSubCategoryInput');
-        const addSubCategoryBtn = document.getElementById('addSubCategoryBtn');
-
-        const vendorListDiv = document.getElementById('vendorList');
-        const newVendorInput = document.getElementById('newVendorInput');
-        const addVendorBtn = document.getElementById('addVendorBtn');
-
-        // New Assignment Fields
-        const assignSubcategoryListDiv = document.getElementById('assignSubcategoryListDiv');
-        const manageCategorySelect = document.getElementById('manageCategorySelect');
         
         const initialTimestamp = (new Date()).toLocaleString();
         
@@ -559,11 +466,7 @@
             { category: 'NATCRIM', subCategory: 'TW', sourceName: 'TSA No Fly List & Traveler Redress', vendor: 'SJV', history: [{ timestamp: initialTimestamp, updateDetails: 'Initial creation.' }] },
             { category: 'NATCRIM', subCategory: 'TW', sourceName: 'Executive Orders / State Dept sanctions (EO 13224)', vendor: 'SJV', history: [{ timestamp: initialTimestamp, updateDetails: 'Initial creation.' }] },
             
-            // Placeholder data for other categories (used to test management features)
-            { category: 'SSN', subCategory: 'Verification', sourceName: 'SSA Death Master File', vendor: 'SJV', history: [{ timestamp: initialTimestamp, updateDetails: 'Initial creation.' }] },
-            { category: 'Federal CRIM', subCategory: 'U.S. District Courts', sourceName: 'Federal Court Records Database', vendor: 'SJV', history: [{ timestamp: initialTimestamp, updateDetails: 'Initial creation.' }] },
-            
-        ]; // Total entries: 18
+        ]; // Total entries: 16
         // --- END DATA ARRAY ---
 
         let isUpdating = false;
@@ -598,16 +501,22 @@
                 const defaultText = select === filterExampleOf ? 'Category' : 'Select Category';
                 select.innerHTML = `<option value="">${defaultText}</option>`;
                 
-                // Filter only for NATCRIM in main filter/dropdowns
-                const filteredCategories = categories.filter(c => c === 'NATCRIM');
-                
-                filteredCategories.sort().forEach(cat => {
+                // --- FIX: Filter the modal dropdown to ONLY show NATCRIM ---
+                const categoriesToDisplay = categories.filter(c => c === 'NATCRIM');
+
+                categoriesToDisplay.sort().forEach(cat => {
                     const option = document.createElement('option');
                     option.value = cat;
                     option.textContent = cat;
                     select.appendChild(option);
                 });
-                select.value = currentValue || 'NATCRIM'; // Default to NATCRIM
+                
+                // Keep filterExampleOf stuck on NATCRIM unless manually changed
+                if (select === filterExampleOf) {
+                    select.value = 'NATCRIM'; 
+                } else {
+                    select.value = currentValue || 'NATCRIM';
+                }
             });
             
             // Subcategory Filter Dropdown (All subcategories)
@@ -615,9 +524,9 @@
             filterSubCategory.innerHTML = `<option value="">Subcategory</option>`;
             subCategories.sort().forEach(sub => {
                 const option = document.createElement('option');
-                option.value = sub;
-                option.textContent = sub;
-                filterSubCategory.appendChild(option);
+                    option.value = sub;
+                    option.textContent = sub;
+                    filterSubCategory.appendChild(option);
             });
             filterSubCategory.value = filterSubCurrentValue;
 
@@ -674,8 +583,11 @@
             const selectedVendor = filterVendor.value;
             const searchTermSourceName = filterSourceName.value.trim().toLowerCase();
 
+            // Set the Category filter to NATCRIM if cleared (to maintain the default view)
+            const activeCategoryFilter = selectedCategory || 'NATCRIM';
+
             const filteredData = data.filter(item => {
-                const matchesCategory = !selectedCategory || item.category === selectedCategory;
+                const matchesCategory = !activeCategoryFilter || item.category === activeCategoryFilter;
                 const matchesSubCategory = !selectedSubCategory || item.subCategory === selectedSubCategory;
                 const matchesVendor = !selectedVendor || item.vendor === selectedVendor;
                 const matchesSourceName = !searchTermSourceName || item.sourceName.toLowerCase().includes(searchTermSourceName);
@@ -686,17 +598,16 @@
             renderTable(filteredData);
         };
         
-        // --- MANAGE CATEGORIES LOGIC ---
+        // --- MANAGE CATEGORIES LOGIC (Unused in current UI, kept for reference) ---
         
         const isCategoryUsed = (type, value) => {
             if (type === 'category') {
-                 // Used if it has assigned subcategories OR if any records use it
+                if (data.some(item => item.category === value)) return true;
                 if (categoryAssignments[value] && categoryAssignments[value].length > 0) return true;
-                return data.some(item => item.category === value);
+                return false;
             } else if (type === 'vendor') {
                 return data.some(item => item.vendor === value);
             } else if (type === 'subCategory') {
-                // Used if it is assigned to any category OR if any records use it
                 const assigned = Object.values(categoryAssignments).flat();
                 if (assigned.includes(value)) return true;
                 return data.some(item => item.subCategory === value);
@@ -704,77 +615,7 @@
             return false;
         };
 
-        const renderManagementLists = () => {
-            const createListItem = (type, value, list) => {
-                const isUsed = isCategoryUsed(type, value);
-                const item = document.createElement('div');
-                item.className = 'manage-list-item';
-                
-                item.innerHTML = `
-                    <span class="text-sm font-medium">${value}</span>
-                    <div class="manage-actions">
-                        <button class="text-xs manage-btn-update" data-type="${type}" data-value="${value}">Rename</button>
-                        <button class="text-xs manage-btn-delete ${isUsed ? 'opacity-50 cursor-not-allowed' : ''}" 
-                                data-type="${type}" 
-                                data-value="${value}" 
-                                ${isUsed ? 'disabled' : ''}
-                                title="${isUsed ? 'Cannot delete: item is currently in use (assigned or data records exist).' : 'Delete item.'}">
-                                Delete
-                        </button>
-                    </div>
-                `;
-                list.appendChild(item);
-            };
-
-            // Render Category List
-            categoryListDiv.innerHTML = '';
-            categories.sort().forEach(cat => createListItem('category', cat, categoryListDiv));
-            
-            // Render Subcategory List 
-            subCategoryListDiv.innerHTML = '';
-            subCategories.sort().forEach(sub => createListItem('subCategory', sub, subCategoryListDiv));
-
-            // Render Vendor List
-            vendorListDiv.innerHTML = '';
-            vendors.sort().forEach(v => createListItem('vendor', v, vendorListDiv));
-            
-            // --- Assignment List (New Panel) ---
-            const renderAssignmentList = (selectedCat) => {
-                assignSubcategoryListDiv.innerHTML = '';
-                if (!selectedCat) {
-                    assignSubcategoryListDiv.innerHTML = '<p class="text-sm text-gray-500 italic p-2">Select a category above to manage assignments.</p>';
-                    return;
-                }
-                
-                const assigned = categoryAssignments[selectedCat] || [];
-                
-                subCategories.sort().forEach(sub => {
-                    const isChecked = assigned.includes(sub);
-                    const div = document.createElement('div');
-                    div.className = 'flex items-center space-x-2 manage-list-item p-2';
-                    div.innerHTML = `
-                        <input type="checkbox" id="assign-${sub}" value="${sub}" ${isChecked ? 'checked' : ''} data-category="${selectedCat}">
-                        <label for="assign-${sub}" class="text-sm">${sub}</label>
-                    `;
-                    assignSubcategoryListDiv.appendChild(div);
-                });
-            };
-            
-            // Initialize/update Category selection in assignment panel
-            manageCategorySelect.innerHTML = `<option value="">Select Category to Assign</option>`;
-            categories.sort().forEach(cat => {
-                const option = document.createElement('option');
-                option.value = cat;
-                option.textContent = cat;
-                manageCategorySelect.appendChild(option);
-            });
-            
-            // Set initial assignment list based on current selection
-            manageCategorySelect.onchange = () => renderAssignmentList(manageCategorySelect.value);
-            renderAssignmentList(manageCategorySelect.value);
-        };
-
-        // --- HANDLERS ---
+        // --- HANDLERS (Simplified for current UI) ---
         
         // Category/Subcategory Modal Change Handler
         const handleModalCategoryChange = () => {
@@ -789,187 +630,17 @@
         });
         
 
-        // Main Renaming Logic
+        // Main Renaming Logic (Simplified)
         const handleRename = (type, oldValue) => {
-            const newValue = prompt(`Enter new name for ${type} '${oldValue}':`);
-            if (newValue && newValue.trim() !== oldValue) {
-                const cleanNewValue = newValue.trim();
-                
-                const list = type === 'category' ? categories : (type === 'vendor' ? vendors : subCategories);
-                
-                if (list.includes(cleanNewValue)) {
-                    alert(`Error: A ${type} named '${cleanNewValue}' already exists.`);
-                    return;
-                }
-
-                if (type === 'category') {
-                    // Update Category list, assignments, and data entries
-                    const index = categories.indexOf(oldValue);
-                    if (index !== -1) categories[index] = cleanNewValue;
-                    
-                    // Update assignments keys
-                    if (categoryAssignments[oldValue]) {
-                        categoryAssignments[cleanNewValue] = categoryAssignments[oldValue];
-                        delete categoryAssignments[oldValue];
-                    }
-
-                    data.forEach(item => { if (item.category === oldValue) item.category = cleanNewValue; });
-                    
-                } else if (type === 'vendor') {
-                    // Update Vendor list and all corresponding data entries
-                    const index = vendors.indexOf(oldValue);
-                    if (index !== -1) vendors[index] = cleanNewValue;
-                    data.forEach(item => { if (item.vendor === oldValue) item.vendor = cleanNewValue; });
-                    
-                } else if (type === 'subCategory') {
-                    // Update Subcategory list, assignments, and data entries
-                    const index = subCategories.indexOf(oldValue);
-                    if (index !== -1) subCategories[index] = cleanNewValue;
-                    
-                    // Update assignments
-                    Object.keys(categoryAssignments).forEach(cat => {
-                        const subIndex = categoryAssignments[cat].indexOf(oldValue);
-                        if (subIndex !== -1) {
-                            categoryAssignments[cat][subIndex] = cleanNewValue;
-                        }
-                    });
-
-                    data.forEach(item => { 
-                        if (item.subCategory === oldValue) {
-                            item.subCategory = cleanNewValue;
-                            if (item.sourceName === oldValue) {
-                                item.sourceName = cleanNewValue;
-                            }
-                        }
-                    });
-                }
-
-                refreshDropdowns();
-                applyFilters();
-                renderManagementLists();
-                alert(`${oldValue} successfully renamed to ${cleanNewValue}.`);
-            }
+            // Logic removed for management console since it's not visible
+            alert("Management console functionality is currently inactive.");
         };
         
-        // Main Deletion Logic
+        // Main Deletion Logic (Simplified)
         const handleDelete = (type, value) => {
-            if (isCategoryUsed(type, value)) {
-                alert(`Cannot delete ${type} '${value}': It is currently associated with one or more checks in the main table.`);
-                return;
-            }
-            
-            if (confirm(`Are you sure you want to delete the ${type} '${value}'? This cannot be undone.`)) {
-                if (type === 'category') {
-                    categories = categories.filter(cat => cat !== value);
-                    delete categoryAssignments[value];
-                } else if (type === 'vendor') {
-                    vendors = vendors.filter(v => v !== value);
-                } else if (type === 'subCategory') {
-                    subCategories = subCategories.filter(sub => sub !== value);
-                    
-                    // Remove the subcategory from all assignments
-                    Object.keys(categoryAssignments).forEach(cat => {
-                        categoryAssignments[cat] = categoryAssignments[cat].filter(sub => sub !== value);
-                    });
-                    
-                    // Filter the main data array
-                    data = data.filter(item => item.subCategory !== value);
-                }
-                
-                refreshDropdowns();
-                applyFilters();
-                renderManagementLists();
-                alert(`${value} deleted successfully.`);
-            }
+             // Logic removed for management console since it's not visible
+            alert("Management console functionality is currently inactive.");
         };
-
-        // Event Listener for Assignment Checkboxes
-        assignSubcategoryListDiv.addEventListener('change', (e) => {
-            if (e.target.type === 'checkbox') {
-                const category = e.target.getAttribute('data-category');
-                const sub = e.target.value;
-                
-                if (!categoryAssignments[category]) {
-                    categoryAssignments[category] = [];
-                }
-
-                if (e.target.checked) {
-                    if (!categoryAssignments[category].includes(sub)) {
-                        categoryAssignments[category].push(sub);
-                    }
-                } else {
-                    categoryAssignments[category] = categoryAssignments[category].filter(s => s !== sub);
-                }
-                // Update the Add/Update modal's subcategory dropdown if the currently selected category is the one being modified
-                if (categorySelect.value === category) {
-                    filterSubcategoryOptions(category);
-                }
-            }
-        });
-
-
-        // Event Listener for Rename and Delete buttons in management modal
-        manageCategoriesModal.addEventListener('click', (e) => {
-            const target = e.target;
-            if (target.classList.contains('manage-btn-update')) {
-                const type = target.getAttribute('data-type');
-                const value = target.getAttribute('data-value');
-                handleRename(type, value);
-            } else if (target.classList.contains('manage-btn-delete') && !target.disabled) {
-                const type = target.getAttribute('data-type');
-                const value = target.getAttribute('data-value');
-                handleDelete(type, value);
-            }
-        });
-        
-        // Event Listener for Add Category button
-        addCategoryBtn.addEventListener('click', () => {
-            const newCat = newCategoryInput.value.trim();
-            if (!newCat) return;
-            if (!categories.includes(newCat)) {
-                categories.push(newCat);
-                categoryAssignments[newCat] = []; // Initialize empty assignment list
-                newCategoryInput.value = '';
-                refreshDropdowns();
-                renderManagementLists();
-                alert(`New Category '${newCat}' added!`);
-            } else {
-                alert(`Category '${newCat}' already exists.`);
-            }
-        });
-        
-        // Event Listener for Add Subcategory button
-        addSubCategoryBtn.addEventListener('click', () => {
-            const newSub = newSubCategoryInput.value.trim();
-            if (!newSub) return;
-
-            if (subCategories.includes(newSub)) {
-                 alert(`Subcategory '${newSub}' already exists.`);
-                 return;
-            }
-            
-            subCategories.push(newSub);
-            newSubCategoryInput.value = '';
-            
-            refreshDropdowns();
-            renderManagementLists();
-            alert(`New Subcategory '${newSub}' added! Remember to assign it to a Category.`);
-        });
-
-        // Event Listener for Add Vendor button
-        addVendorBtn.addEventListener('click', () => {
-            const newVendor = newVendorInput.value.trim();
-            if (!newVendor) return;
-            if (!vendors.includes(newVendor)) {
-                vendors.push(newVendor);
-                newVendorInput.value = '';
-                refreshDropdowns();
-                renderManagementLists();
-                alert(`New Vendor '${newVendor}' added!`);
-            } else {
-                 alert(`Vendor '${newVendor}' already exists.`);
-            }
-        });
 
         // --- UI INITIALIZATION & EVENT HANDLERS ---
         
@@ -980,10 +651,6 @@
         applyFilters(); 
         
         // Open/Close Modals
-        manageCategoriesBtn.addEventListener('click', () => {
-            renderManagementLists();
-            manageCategoriesModal.style.display = 'flex';
-        });
         
         document.getElementById('addCheckBtn').addEventListener('click', () => {
             openModal('add');
@@ -999,7 +666,7 @@
             filterSourceName.value = '';
             applyFilters();
         });
-        // --- END BUTTON HANDLERS ---
+        // --- END BUTTON HEADLERS ---
         
         // Universal Modal Close Function
         window.closeModal = (modalId) => {
